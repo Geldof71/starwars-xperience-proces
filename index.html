@@ -65,16 +65,21 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .hero .kicker{color:var(--sand);font-size:15px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 14px}
 .hero h1{font-size:clamp(44px,11vw,116px);color:var(--gold);letter-spacing:.09em}
 .hero h1 span{display:block;font-size:.42em;letter-spacing:.3em;color:var(--text);font-weight:500;margin-top:10px}
-.crawl-stage{height:300px;width:min(720px,100%);perspective:380px;overflow:hidden;margin-top:34px;
+.crawl-stage{height:480px;width:min(980px,100%);perspective:560px;overflow:hidden;margin-top:34px;
   -webkit-mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent)}
-.crawl{transform-origin:50% 100%;transform:rotateX(34deg);color:var(--gold);font-weight:500;font-size:22px;line-height:1.5;text-align:justify;padding:0 8%}
-.crawl.run{animation:crawl 54s linear 1.2s 1 both}
+.crawl{transform-origin:50% 100%;transform:rotateX(34deg);color:var(--gold);font-weight:500;font-size:clamp(23px,3vw,34px);line-height:1.5;text-align:justify;padding:0 6%}
+.crawl.run{animation:crawl 112s linear 1.2s 1 both}
 .crawl p{margin:0 0 1em}
-@keyframes crawl{from{transform:rotateX(34deg) translateY(300px)}to{transform:rotateX(34deg) translateY(-110%)}}
+@keyframes crawl{from{transform:rotateX(34deg) translateY(480px)}to{transform:rotateX(34deg) translateY(-110%)}}
+.stars{position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:repeat;
+  background-image:radial-gradient(1.6px 1.6px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 90px 140px,#fff,transparent),radial-gradient(2.2px 2.2px at 160px 70px,#ffe9a8,transparent),radial-gradient(1px 1px at 230px 200px,#fff,transparent),radial-gradient(1.6px 1.6px at 300px 110px,#cfe0ff,transparent),radial-gradient(1px 1px at 60px 250px,#fff,transparent);background-size:320px 280px}
+.stars.b{background-size:210px 190px;background-position:70px 40px;animation:tw 5s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.3}to{opacity:1}}
+.hero>*:not(.stars){position:relative;z-index:1}
 .hero-actions{margin-top:20px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center}
 .hero.static .crawl{animation:none;transform:none}
 .hero.static .crawl-stage{height:auto;perspective:none;-webkit-mask-image:none;mask-image:none}
-@media (prefers-reduced-motion:reduce){.crawl.run{animation:none;transform:none}.crawl-stage{height:auto;perspective:none;-webkit-mask-image:none;mask-image:none}}
+@media (prefers-reduced-motion:reduce){.stars.b{animation:none}.crawl.run{animation:none;transform:none}.crawl-stage{height:auto;perspective:none;-webkit-mask-image:none;mask-image:none}}
 
 /* keuzepagina */
 .menu{padding:56px 0 80px}
@@ -149,7 +154,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .snd[hidden]{display:none}
 .snd:hover{background:var(--gold);color:#120f00}
 #yt-wrap{position:fixed;left:-9999px;top:0;width:220px;height:220px;overflow:hidden}
-@media (max-width:560px){body{font-size:16px}.crawl{font-size:19px}.bar nav{gap:12px}}
+@media (max-width:560px){body{font-size:16px}.crawl{font-size:21px}.bar nav{gap:12px}}
 </style>
 </head>
 <body>
@@ -180,12 +185,18 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 
 <section class="view" id="view-intro">
 <div class="hero" id="hero">
+  <div class="stars" aria-hidden="true"></div><div class="stars b" aria-hidden="true"></div>
   <p class="kicker">Een schoolproject van HvA studenten, RAI Europahal Hal 1</p>
   <h1>Star Wars Xperience<span>Tatooine</span></h1>
   <div class="crawl-stage" aria-label="Inleiding"><div class="crawl" id="crawl">
-    <p>Het is blok 5 op de SMP opleiding van de Hogeschool van Amsterdam. Twee mannen lopen de school binnen, met een missie.</p>
-    <p>Ze willen een Star Wars Xperience maken. Een hele wereld onder één dak, in de grootste hal van de RAI.</p>
-    <p>Ruim twee blokken lang werken drie Jedi’s aan die missie: Coen, Elvin en Stan.</p>
+    <p>Het is een tijd van grote ideeën op de Hogeschool van Amsterdam. Blok 5 van de opleiding SMP is begonnen.</p>
+    <p>Twee mannen lopen de school binnen, met een missie: een wereld uit een andere galaxy, ver hier vandaan, naar hier brengen.</p>
+    <p>Drie Jedi’s nemen de opdracht aan: Coen, Elvin en Stan.</p>
+    <p>Hard wordt er gewerkt aan de xperience. Concepten ontstaan, de een nog wilder dan de ander: podracen, lasergamen, klimmen en een complete Tatooine, helemaal nagebouwd.</p>
+    <p>Er wordt zelfs een holo map gebouwd. Met die kaart in de hand pitchen de Jedi’s hun eerste concepten aan de twee opdrachtgevers.</p>
+    <p>Het blok eindigt met een 9. Maar de missie is nog niet af.</p>
+    <p>De opdrachtgevers vinden het een heel vet concept, maar willen zien hoe het echt werkt. Met een echte locatie en een echte manier van bouwen.</p>
+    <p>De Jedi’s kiezen de RAI in Amsterdam: groot, bekend bij toeristen en goed bereikbaar met het OV. Hal 1 wordt het decor voor Tatooine.</p>
     <p>Hun doel: de totale xperience zo in beeld brengen dat meteen duidelijk is wat de potentie van deze opdracht is.</p>
     <p>In deze setting zie je het hele proces. Van grijs blokkenmodel tot Blender, van render tot AI foto, en straks tot film.</p>
     <p>Kijk de afleveringen achter elkaar, of kies zelf.</p>
@@ -279,6 +290,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   var EPS=[
    {id:1,title:'De opdracht en het onderzoek',sum:'Waarom de RAI? Het onderzoek, de feedback en de keuze voor een echte locatie.',status:'Eerste versie',thumb:null,music:{id:'muziek/watto.mp3',start:0,vol:18},
     slides:[
+     txt('Blok 5 in het kort','We werkten hard aan de xperience. We maakten concepten als podracen, lasergamen, klimmen en een complete Tatooine. We bouwden een holo map en pitchten onze eerste concepten aan de twee opdrachtgevers. Het blok sloten we af met een 9.',12),
      txt('Eerst een vraag','Waar zet je een Star Wars Xperience neer? Aan het begin van de opdracht wisten we dat nog niet.',7),
      txt('Wij denken groot','Een grote xperience heeft een grote hal nodig.',6),
      txt('Waarom de RAI','De RAI is enorm, ligt in Amsterdam, is bekend bij toeristen en goed bereikbaar met het OV.',9),
