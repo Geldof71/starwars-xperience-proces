@@ -68,7 +68,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .crawl-stage{height:var(--sh);width:min(740px,92%);perspective:900px;overflow:hidden;margin-top:6px;position:relative;
   -webkit-mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent)}
 .crawl{position:absolute;left:0;right:0;top:100%;transform-origin:50% 0;transform:rotateX(26deg);color:var(--gold);font-weight:500;font-size:clamp(26px,3.6vw,52px);line-height:1.4;text-align:justify;padding:0 5%}
-.crawl.run{animation:crawl 115s linear .5s 1 both}
+.crawl.run{animation:crawl 124s linear .5s 1 both}
 .crawl p{margin:0 0 1em}
 @keyframes crawl{from{transform:rotateX(26deg) translateY(calc(var(--sh) * -.45))}to{transform:rotateX(26deg) translateY(calc(-100% - var(--sh)))}}
 .stars{position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:repeat;
@@ -115,8 +115,9 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .vo[hidden]{display:none}
 .vo .av{width:clamp(56px,9vw,96px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:2px solid var(--gold);background:#000;flex:none;box-shadow:0 0 calc(6px + var(--lvl,0) * 26px) calc(var(--lvl,0) * 8px) #ffd84a99}
 .vo .av[hidden]{display:none}
-.vo .av.r2{animation:r2in .4s cubic-bezier(.2,1.4,.4,1) both}
-.vo .av.r2.beep{animation:vpulse .28s ease-in-out infinite alternate}
+.vo .av.r2{animation:r2in .4s cubic-bezier(.2,1.4,.4,1) both;border-color:#4aa3ff;box-shadow:0 0 12px 1px #4aa3ff88}
+.vo .av.r2.beep{animation:vpulseb .28s ease-in-out infinite alternate}
+@keyframes vpulseb{from{box-shadow:0 0 6px 0 #4aa3ff66}to{box-shadow:0 0 26px 7px #4aa3ffcc}}
 @keyframes r2in{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
 .vo .av.pulse{animation:vpulse .5s ease-in-out infinite alternate}
 @keyframes vpulse{from{box-shadow:0 0 6px 0 #ffd84a66}to{box-shadow:0 0 26px 7px #ffd84acc}}
@@ -143,7 +144,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 @keyframes grow{to{transform:scaleX(1)}}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:clamp(10px,2vw,22px)}
 .fc{border:1px solid var(--gold-dim);background:#0d0a12;padding:clamp(12px,2.4vw,30px);text-align:center;opacity:0;transform:translateY(14px);animation:pop .7s ease-out forwards;animation-delay:calc(var(--k)*.3s + .2s)}
-.fc b{display:block;font-family:var(--head);font-weight:700;font-size:clamp(28px,5.4vw,72px);color:var(--gold);line-height:1.05}
+.fc b{display:block;overflow-wrap:anywhere;font-family:var(--head);font-weight:700;font-size:clamp(28px,5.4vw,72px);color:var(--gold);line-height:1.05}
 .fc span{display:block;margin-top:8px;font-size:clamp(13px,1.9vw,22px);color:var(--text)}
 @keyframes pop{to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.brow .tr i{animation:none;transform:none}.fc{animation:none;opacity:1;transform:none}.sl.text .bgimg{animation:none}}
@@ -234,11 +235,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     <p>De opdrachtgevers vinden het een heel vet concept, maar willen zien hoe het echt werkt. Met een echte locatie en een echte manier van bouwen.</p>
     <p>De Jedi’s kiezen de RAI in Amsterdam: groot, bekend bij toeristen en goed bereikbaar met het OV. Hal 1 wordt het decor voor Tatooine.</p>
     <p>Hun doel: de totale xperience zo in beeld brengen dat meteen duidelijk is wat de potentie van deze opdracht is.</p>
-    <p>Dit is aflevering 1: de keuze voor de RAI, en het eerste grijze model van Hal 1.</p>
+    <p>Tatooine is maar één deel van die xperience. Dat bouwen ze als eerste: hun pilot.</p>
+    <p>Dit is MH1.3, aflevering 1: de keuze voor de RAI, en het eerste grijze model van Hal 1.</p>
   </div></div>
   <div class="hero-actions">
     <a class="btn" href="#menu" id="to-menu">Naar de afleveringen</a>
-    <a class="btn ghost" href="#aflevering-1">Start aflevering 1</a>
+    <a class="btn ghost" href="#aflevering-1">Start MH1.3, aflevering 1</a>
   </div>
 </div>
 </section>
@@ -336,7 +338,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 
   var MAIN='muziek/star_wars_main.mp3';
   var EPS=[
-   {id:1,title:'MH1.3: De missie, de RAI',sum:'Van concept naar concrete plek. Waarom de RAI, het model, Blender, de AI laag en de video.',status:'Eerste versie',thumb:'img/blender/SHOT_1.jpg',music:{id:'muziek/watto.mp3',start:21,vol:32},
+   {id:1,title:'MH1.3: De missie, de RAI',sum:'Onze pilot: Tatooine, het eerste deel van de xperience. Waarom de RAI, het model, Blender, de AI laag en de video.',status:'Eerste versie',thumb:'img/blender/SHOT_1.jpg',music:{id:'muziek/watto.mp3',start:21,vol:32},
     slides:[
      V(txt('De missie','Van concept naar een echte plek.',6.6,'img/blender/SHOT_1.jpg'),['v1a']),
      V(W(txt('Onze gids','Een bezorgde droid vertelt het verhaal.',6.2,'img/blender/SHOT_2.jpg'),'cut'),['v1b']),
@@ -354,12 +356,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
      W(txt('Dit moest het worden','De RAI. Die gaan we nabouwen.',5,'img/blender/SHOT_5.jpg'),'iris'),
      V(W(txt('Claude, onze droid','We lieten Claude een compleet onderzoek doen om de RAI na te bouwen in HTML code.',5.3),'v'),['v3b']),
      V(W({type:'embed',src:'rai_grijs_model.html',cap:'Interactief: de RAI als grijs model. Draai, zoom en loop zelf rond.',manual:true},'hr'),['v3c','v3d']),
-     W(txt('Tatooine in Hal 1','De Europahal wordt de hoofdhal: de wereld van Tatooine.',5,'img/blender/SHOT_6.jpg'),'iris'),
+     W(txt('Tatooine in Hal 1','Tatooine is maar één deel van de xperience. Wij maken het als eerste, dus dit is onze pilot.',6.5,'img/blender/SHOT_6.jpg'),'iris'),
      W(txt('Naar Blender','Het model zetten we om naar een Blender project. Eerst nog ruw.',5),'h'),
      W(img(1,3.2),'v'),W(img(2,3.2),'cut'),W(img(5,3.2),'cut'),W(img(6,3.2),'cut'),W(img(7,3.2),'cut'),
      W(txt('De AI laag','Daaroverheen komt een AI laag. Links Blender, rechts AI. Schuif zelf mee.',4.5),'d'),
      W(cmp(1,null,5),'v'),W(cmp(2,null,5),'cut'),W(cmp(5,'img/ai_nano/SHOT_5.jpg',5),'cut'),W(cmp(6,null,5),'cut'),W(cmp(7,null,5),'cut'),W(cmp(8,'img/ai_nano/SHOT_8.jpg',5),'cut'),W(cmp(10,null,5),'cut'),
-     W(txt('En dan de video','Hoe het er uit kan zien, in beweging. Die maken we nog af.',6,'img/ai/SHOT_8.jpg'),'iris')
+     W(txt('En dan de video','Hoe Tatooine er uit kan zien, in beweging. Die maken we nog af. Daarna volgen de andere delen van de xperience.',7.5,'img/ai/SHOT_8.jpg'),'iris')
     ]},
    {id:2,title:'Het grijze model',sum:'De RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
     slides:[
@@ -522,10 +524,18 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     for(var k=1;k<=3;k++){var nx=e0.slides[i+k];if(nx)assets(nx).forEach(pre)}
     ready(e0.slides[i],function(){if(gt===gTok)goto2(i,kind)});
   }
+  function fitFacts(el){
+    var bs=Array.prototype.slice.call(el.querySelectorAll('.fc b'));if(!bs.length)return;
+    bs.forEach(function(b){b.style.fontSize='';b.style.overflowWrap='normal'});
+    var min=Infinity;
+    bs.forEach(function(b){var fs=parseFloat(getComputedStyle(b).fontSize);while(b.scrollWidth>b.clientWidth+1&&fs>16){fs-=2;b.style.fontSize=fs+'px'}min=Math.min(min,fs)});
+    bs.forEach(function(b){b.style.fontSize=min+'px'});
+  }
   function goto2(i,kind){
     stopLoop();var e=EPS[cur.ep];i=Math.max(0,Math.min(e.slides.length-1,i));cur.i=i;
     var s=e.slides[i];slide=null;held=false;elapsed=0;last=0;pos=100;
     var olds=Array.prototype.slice.call(stage.children).filter(function(c){return !c.classList.contains('keep')});var el=buildSlide(s);stage.appendChild(el);
+    if(s.type==='facts')fitFacts(el);
     var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
     if(kind&&kind!=='cut'&&olds.length&&!reduce&&el.animate&&WP[kind]){
       el.style.zIndex=3;el.style.clipPath=WP[kind][0];sting();
