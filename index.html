@@ -275,6 +275,8 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       <p>Star Wars Episode I Soundtrack: Main Title and The Arrival at Naboo, en Watto’s Deal and Kids at Play. De muziek is van John Williams, uitgegeven door Sony Classical. Het overgangsgeluid komt uit LEGO Star Wars, aangeleverd door het team. Alleen gebruikt in dit niet commerciële schoolproject.</p>
     </div>
     <div>
+      <h3>Foto’s van de RAI</h3>
+      <p>Hotlinks naar Wikimedia Commons. Overzicht voorgevel: A. J. van der Wal, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0. Hal in aanbouw: Joop van Bilsen, Anefo, Nationaal Archief, CC0. Booggewelf: Fernando Pereira, Anefo, Nationaal Archief, CC0. Complex: Rob Bogaerts, Anefo, Nationaal Archief, CC0. RAI 1974: J.M. Arsath Ro’is, Stadsarchief Amsterdam, CC0.</p>
       <h3>Bronnen locatie onderzoek</h3>
       <p>RAI Amsterdam: rai.nl (plattegrond en vloerbelasting) en Wikipedia (totale oppervlakte, capaciteit, rijksmonument). Rotterdam Ahoy: ahoy.nl en locaties.nl. Brabanthallen: technische specificaties op locaties.nl. Expo Greater Amsterdam: factsheet van Libema. Jaarbeurs Utrecht: jaarbeurs.nl. MECC Maastricht: lijst van congrescentra op Wikipedia. Bereikbaarheid: AEO. Alle oppervlaktes zijn afgerond en door de locaties zelf opgegeven, dus indicatief.</p>
       <h3>3D modellen</h3>
@@ -312,7 +314,9 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   function facts(t,items,note,d){return {type:'facts',title:t,items:items,note:note,dur:d||10}}
   function img(n,d){return {type:'img',src:'img/blender/SHOT_'+n+'.jpg',cap:SHOT[n][0],sub:SHOT[n][1],dur:d||5.5}}
   function W(x,w){x.w=w;return x}
-  function cmp(n,alt){return {type:'cmp',n:n,cap:SHOT[n][0],alt:alt,dur:10}}
+  var CM='https://commons.wikimedia.org/wiki/Special:FilePath/';
+  function rimg(f,cap,sub,d){return {type:'img',src:CM+encodeURIComponent(f)+'?width=1600',cap:cap,sub:sub,alt:'Foto: '+cap,dur:d||3.4}}
+  function cmp(n,alt,d){return {type:'cmp',n:n,cap:SHOT[n][0],alt:alt,dur:d||10}}
 
   var MAIN='muziek/star_wars_main.mp3';
   var EPS=[
@@ -321,7 +325,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
      txt('De missie','Na blok 5 hadden we \u00e9\u00e9n missie.',4.5,'img/blender/SHOT_1.jpg'),
      W(txt('Onze concepten concreet maken','Van idee naar iets dat je kunt laten zien.',4.5,'img/blender/SHOT_2.jpg'),'cut'),
      W(txt('Hoe gaan we dat doen?','Een concrete locatie is het begin. Waar beginnen we?',5),'h'),
-     W(facts('Waarom de RAI?',[['15.000 m\u00b2','Europahal (Hal 1), alleen de hal zelf'],['12.900','bezoekers volgens Wikipedia'],['Rijksmonument','sinds 2015'],['3.000 kg/m\u00b2','maximale vloerbelasting Hal 1']],'Bronnen: rai.nl en Wikipedia. Zie Credits.',8),'d'),
+     W(txt('Onze keuze: de RAI','Groot, bekend en goed bereikbaar.',4.5,CM+encodeURIComponent('Overzicht gedeelte voorgevel - Amsterdam - 20356997 - RCE.jpg')+'?width=1600'),'h'),
+     W(rimg('Bouw van de nieuwe RAI aan het Europaplein, de hal, Bestanddeelnr 911-6057.jpg','De hal in aanbouw','Foto: Joop van Bilsen / Anefo, Nationaal Archief, CC0'),'v'),
+     W(rimg('Interieur van deels gesloopte RAI, Bestanddeelnr 930-9961.jpg','Het booggewelf van binnen','Foto: Fernando Pereira / Anefo, Nationaal Archief, CC0'),'cut'),
+     W(rimg('Het nieuwe complex (3 hallen, 6 congreszalen), Bestanddeelnr 931-7995.jpg','Het complex aan het Europaplein','Foto: Rob Bogaerts / Anefo, Nationaal Archief, CC0'),'cut'),
+     W(rimg('R.A.I. gebouw op Europaplein 8, Amsterdam 1974.jpg','De RAI in 1974','Foto: J.M. Arsath Ro\u2019is, Stadsarchief Amsterdam, CC0'),'cut'),
+     W(facts('De RAI in cijfers',[['15.000 m\u00b2','Europahal (Hal 1), alleen de hal zelf'],['12.900','bezoekers volgens Wikipedia'],['Rijksmonument','sinds 2015'],['3.000 kg/m\u00b2','maximale vloerbelasting Hal 1']],'Bronnen: rai.nl en Wikipedia. Zie Credits.',8),'d'),
      W(bars('Hal 1 tegen Hal 1',[{l:'RAI Amsterdam',v:15000,hl:1},{l:'Rotterdam Ahoy',v:9940},{l:'Brabanthallen Den Bosch',v:9190},{l:'Expo Greater Amsterdam',v:6434}],'Eerste hal van elke locatie. Indicatief: de locaties meten zelf, zie Credits.',9),'cut'),
      W(bars('Totaal vloeroppervlak',[{l:'RAI Amsterdam',v:112200,hl:1},{l:'Jaarbeurs Utrecht',v:90000,p:'ruim '},{l:'Rotterdam Ahoy',v:90000},{l:'Brabanthallen',v:55000},{l:'MECC Maastricht',v:30000}],'Beurs en congresruimte, afgerond. Zie Credits voor bronnen.',9),'cut'),
      W(facts('En goed bereikbaar',[['Eigen station','Amsterdam RAI, met metro en tram'],['12 min','vanaf het centrum van Amsterdam'],['8 min','vanaf Schiphol']],'Bron: AEO en de plattegrond van de RAI. Zie Credits.',7),'cut'),
@@ -332,7 +341,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
      W(txt('Naar Blender','Het model zetten we om naar een Blender project. Eerst nog ruw.',5),'h'),
      W(img(1,3.2),'v'),W(img(2,3.2),'cut'),W(img(5,3.2),'cut'),W(img(6,3.2),'cut'),W(img(7,3.2),'cut'),
      W(txt('De AI laag','Daaroverheen komt een AI laag. Links Blender, rechts AI. Schuif zelf mee.',4.5),'d'),
-     W(cmp(2),'cut'),
+     W(cmp(1,null,5),'v'),W(cmp(2,null,5),'cut'),W(cmp(5,'img/ai_nano/SHOT_5.jpg',5),'cut'),W(cmp(6,null,5),'cut'),W(cmp(7,null,5),'cut'),W(cmp(8,'img/ai_nano/SHOT_8.jpg',5),'cut'),W(cmp(10,null,5),'cut'),
      W(txt('En dan de video','Hoe het er uit kan zien, in beweging. Die maken we nog af.',6,'img/ai/SHOT_8.jpg'),'iris')
     ]},
    {id:2,title:'Het grijze model',sum:'De RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
@@ -413,7 +422,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       s.items.forEach(function(it,k){var c=document.createElement('div');c.className='fc';c.style.setProperty('--k',k);c.innerHTML='<b></b><span></span>';c.firstChild.textContent=it[0];c.lastChild.textContent=it[1];d.querySelector('.fgrid').appendChild(c)});
     }
     else if(s.type==='img'){
-      d.innerHTML='<img alt=""><div class="cap"></div>';var im=d.firstChild;im.src=s.src;im.alt='Blender render: '+s.cap;
+      d.innerHTML='<img alt=""><div class="cap"></div>';var im=d.firstChild;im.src=s.src;im.alt=s.alt||('Blender render: '+s.cap);
       d.lastChild.innerHTML=s.cap+'<small>'+s.sub+'</small>';
     }
     else if(s.type==='cmp'){
