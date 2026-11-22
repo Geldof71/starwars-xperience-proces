@@ -114,11 +114,15 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .vo{position:absolute;left:0;right:0;bottom:0;z-index:9;pointer-events:none;display:flex;align-items:flex-end;gap:12px;padding:0 16px 8.5%}
 .vo[hidden]{display:none}
 .vo .av{width:clamp(56px,9vw,96px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:2px solid var(--gold);background:#000;flex:none;box-shadow:0 0 calc(6px + var(--lvl,0) * 26px) calc(var(--lvl,0) * 8px) #ffd84a99}
+.vo .av[hidden]{display:none}
+.vo .av.r2{animation:r2in .4s cubic-bezier(.2,1.4,.4,1) both}
+.vo .av.r2.beep{animation:vpulse .28s ease-in-out infinite alternate}
+@keyframes r2in{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
 .vo .av.pulse{animation:vpulse .5s ease-in-out infinite alternate}
 @keyframes vpulse{from{box-shadow:0 0 6px 0 #ffd84a66}to{box-shadow:0 0 26px 7px #ffd84acc}}
 .vo .av img{width:100%;height:100%;object-fit:cover;display:block}
 .vo .st{background:#000d;color:#fff;padding:8px 14px;font-size:clamp(14px,1.9vw,24px);line-height:1.35;max-width:min(72%,900px);border-left:3px solid var(--gold);text-shadow:0 1px 2px #000}
-@media (prefers-reduced-motion:reduce){.vo .av.pulse{animation:none}}
+@media (prefers-reduced-motion:reduce){.vo .av.pulse,.vo .av.r2,.vo .av.r2.beep{animation:none}}
 .sl.text{display:grid;place-content:center;padding:clamp(20px,6vw,80px);text-align:center;gap:16px}
 .sl.text h3{font-size:clamp(28px,5.5vw,64px);color:var(--gold)}
 .sl.text p{font-size:clamp(19px,2.9vw,38px);max-width:30em;margin:0 auto;color:var(--text);line-height:1.4}
@@ -254,7 +258,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 <section class="view" id="view-ep" hidden>
 <div class="player">
   <div class="ph"><span class="nr" id="p-nr"></span><h2 id="p-title"></h2></div>
-  <div class="stage" id="stage" aria-live="polite"><div class="vo keep" id="vo" hidden><div class="av" aria-hidden="true"><img src="img/droid.jpg" alt=""></div><div class="st"></div></div></div>
+  <div class="stage" id="stage" aria-live="polite"><div class="vo keep" id="vo" hidden><div class="av" aria-hidden="true"><img src="img/droid.jpg" alt=""></div><div class="av r2" id="vo-r2" aria-hidden="true" hidden><img src="img/droid_r2.jpg" alt=""></div><div class="st"></div></div></div>
   <div class="segs" id="segs"></div>
   <div class="ctrl">
     <button type="button" id="b-prev" aria-label="Vorige">&#9664;&#9664; Vorige</button>
@@ -285,7 +289,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     </div>
     <div>
       <h3>Voice over en icoon</h3>
-      <p>De voice over is ingesproken door het team zelf, met eigen stem. Het ronde icoon is een still van C-3PO, © Lucasfilm en Disney, alleen gebruikt in dit niet commerciële schoolproject.</p>
+      <p>De voice over is ingesproken door het team zelf, met eigen stem. De ronde iconen zijn stills van C-3PO en R2-D2, © Lucasfilm en Disney, alleen gebruikt in dit niet commerciële schoolproject. Het R2-D2 geluidje is door het team zelf aangeleverd en ook © Lucasfilm en Disney.</p>
       <h3>Foto’s van de RAI</h3>
       <p>Hotlinks naar Wikimedia Commons. Overzicht voorgevel: A. J. van der Wal, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0. Hal in aanbouw: Joop van Bilsen, Anefo, Nationaal Archief, CC0. Booggewelf: Fernando Pereira, Anefo, Nationaal Archief, CC0. Complex: Rob Bogaerts, Anefo, Nationaal Archief, CC0. RAI 1974: J.M. Arsath Ro’is, Stadsarchief Amsterdam, CC0.</p>
       <h3>Bronnen locatie onderzoek</h3>
@@ -335,7 +339,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
    {id:1,title:'De missie: de RAI',sum:'Van concept naar concrete plek. Waarom de RAI, het model, Blender, de AI laag en de video.',status:'Eerste versie',thumb:'img/blender/SHOT_1.jpg',music:{id:'muziek/watto.mp3',start:21,vol:32},
     slides:[
      V(txt('De missie','Van concept naar een echte plek.',6.6,'img/blender/SHOT_1.jpg'),['v1a']),
-     V(W(txt('Onze gids','Een bezorgde droid vertelt het verhaal.',5,'img/blender/SHOT_2.jpg'),'cut'),['v1b']),
+     V(W(txt('Onze gids','Een bezorgde droid vertelt het verhaal.',6.2,'img/blender/SHOT_2.jpg'),'cut'),['v1b']),
      V(W(txt('Blok 5 was klaar','De concepten waren gepitcht en goed ontvangen.',4.4,'img/blender/SHOT_5.jpg'),'h'),['v2a']),
      V(W(txt('Nu het moeilijke deel','Ze echt maken.',3,'img/blender/SHOT_6.jpg'),'cut'),['v2b']),
      V(W(txt('Onze keuze: de RAI','Groot, bekend en goed bereikbaar.',5.1,CM+encodeURIComponent('Overzicht gedeelte voorgevel - Amsterdam - 20356997 - RCE.jpg')+'?width=1600'),'h'),['v2c']),
@@ -470,13 +474,18 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   var voOn=true,voQ=[],voTok=0,voEl=new Audio(),voAn=null,voBuf=null,voRaf=0,duckOn=false;
   var voBox=$('vo'),voTxt=voBox.querySelector('.st'),voAv=voBox.querySelector('.av');
   voEl.preload='auto';
+  var CUE={v1b:{show:1.95,sfx:4.0}},curVo='',r2s=false,sfxd=false,r2=$('vo-r2'),sfxEl=new Audio('muziek/r2_sfx.mp3');sfxEl.preload='auto';sfxEl.volume=.8;
+  function r2hide(){r2.hidden=true;r2.classList.remove('beep');r2s=false;sfxd=false}
+  voEl.ontimeupdate=function(){var c=CUE[curVo];if(!c)return;var t=voEl.currentTime;
+    if(!r2s&&t>=c.show){r2s=true;r2.hidden=false}
+    if(!sfxd&&t>=c.sfx){sfxd=true;if(r2.hidden){r2.hidden=false}r2.classList.add('beep');try{sfxEl.currentTime=0;sfxEl.play()}catch(e){}sfxEl.onended=function(){r2.classList.remove('beep')}}};
   function level(){if(!voAn)return;voAn.getByteTimeDomainData(voBuf);var m=0;for(var i=0;i<voBuf.length;i++){var d=Math.abs(voBuf[i]-128);if(d>m)m=d}voAv.style.setProperty('--lvl',Math.min(1,m/55).toFixed(2));voRaf=requestAnimationFrame(level)}
   function setupAn(){if(voAn)return;try{if(!ac||ac.state!=='running')return;var src=ac.createMediaElementSource(voEl);voAn=ac.createAnalyser();voAn.fftSize=256;voBuf=new Uint8Array(voAn.fftSize);src.connect(voAn);voAn.connect(ac.destination)}catch(e){voAn=null}}
   function duck(on){if(on===duckOn)return;duckOn=on;if(!musicOn)return;fade(on?Math.min(want.vol,.07):want.vol,null,on?.012:.006)}
-  function hideSub(){voBox.hidden=true;stage.classList.remove('talk');voAv.classList.remove('pulse');voAv.style.setProperty('--lvl',0);cancelAnimationFrame(voRaf)}
+  function hideSub(){r2hide();voBox.hidden=true;stage.classList.remove('talk');voAv.classList.remove('pulse');voAv.style.setProperty('--lvl',0);cancelAnimationFrame(voRaf)}
   function nextVo(){
     if(!voQ.length){hideSub();duck(false);return}
-    var id=voQ.shift();voEl.src='muziek/vo_'+id+'.mp3';
+    var id=voQ.shift();curVo=id;r2hide();voEl.src='muziek/vo_'+id+'.mp3';
     ensureAC();setupAn();
     var pr=voEl.play();
     voTxt.textContent=VO[id];voBox.hidden=false;stage.classList.add('talk');duck(true);
@@ -484,8 +493,8 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     if(voAn){voAv.classList.remove('pulse');voRaf=requestAnimationFrame(level)}else voAv.classList.add('pulse');
     if(pr&&pr.catch)pr.catch(function(){hideSub();duck(false)});
   }
-  voEl.onended=function(){var t=voTok;setTimeout(function(){if(t===voTok)nextVo()},300)};
-  function stopVo(){voTok++;voQ=[];try{voEl.pause()}catch(e){}hideSub();duck(false)}
+  voEl.onended=function(){var t=voTok;var ex=(sfxEl&&sfxEl.currentTime>0&&!sfxEl.ended&&!sfxEl.paused&&isFinite(sfxEl.duration))?Math.max(0,(sfxEl.duration-sfxEl.currentTime)*1000):0;setTimeout(function(){if(t===voTok)nextVo()},300+ex)};
+  function stopVo(){voTok++;voQ=[];try{voEl.pause();sfxEl.pause()}catch(e){}hideSub();duck(false)}
   function say(ids){if(!voOn)return;stopVo();voQ=ids.slice();nextVo()}
   var lastSnd=0,trA=null;
   function sting(){
