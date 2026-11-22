@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Star Wars Xperience: Tatooine, het proces</title>
+<meta name="description" content="Schoolproject van de HvA: hoe een Tatooine stad in de RAI Europahal van Blender render naar AI render ging.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07060a; --panel:#100e13; --line:#2a2630;
+  --gold:#ffd84a; --gold-dim:#b8962a; --sand:#e0b070;
+  --text:#e9e5dc; --muted:#9b958a;
+  --head:'Saira Extra Condensed','Arial Narrow',sans-serif;
+  --body:'Saira','Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-weight:300;font-size:17px;line-height:1.65;padding-inline:0}
+img{max-width:100%;display:block}
+a{color:var(--gold)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+h1,h2,h3{font-family:var(--head);text-transform:uppercase;letter-spacing:.06em;line-height:1.05;margin:0;font-weight:700;text-wrap:balance}
+
+/* sterrenveld, zachte parallax vrije versie */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+   radial-gradient(1px 1px at 12% 18%,#fff8 50%,transparent 51%),
+   radial-gradient(1px 1px at 78% 8%,#fff6 50%,transparent 51%),
+   radial-gradient(1.5px 1.5px at 45% 62%,#fffa 50%,transparent 51%),
+   radial-gradient(1px 1px at 90% 74%,#fff7 50%,transparent 51%),
+   radial-gradient(1px 1px at 23% 88%,#fff6 50%,transparent 51%),
+   radial-gradient(1px 1px at 60% 30%,#fff5 50%,transparent 51%),
+   radial-gradient(1.5px 1.5px at 6% 52%,#fff7 50%,transparent 51%),
+   radial-gradient(1px 1px at 68% 92%,#fff5 50%,transparent 51%);
+  background-size:520px 520px}
+
+/* DISCLAIMER POORT */
+#gate{position:fixed;inset:0;z-index:100;background:#000;display:grid;place-items:center;padding:24px;overflow:auto}
+#gate[hidden]{display:none}
+.gate-card{max-width:640px;border:1px solid var(--gold-dim);padding:clamp(22px,4vw,44px);background:#0a090c}
+.gate-card h1{color:var(--gold);font-size:clamp(30px,6vw,46px);margin-bottom:18px}
+.gate-card p{margin:0 0 14px;color:var(--text)}
+.gate-card ul{margin:0 0 22px;padding-left:20px;color:var(--text)}
+.gate-card li{margin-bottom:6px}
+.btn{font-family:var(--head);text-transform:uppercase;letter-spacing:.1em;font-weight:700;font-size:20px;background:var(--gold);color:#120f00;border:0;padding:13px 28px;cursor:pointer}
+.btn:hover{background:#fff1a8}
+.gate-small{display:block;margin-top:14px;font-size:14px;color:var(--muted)}
+
+/* HERO MET OPENING CRAWL */
+.hero{min-height:92vh;display:grid;align-content:center;justify-items:center;text-align:center;padding:60px 0 30px;position:relative;overflow:hidden}
+.hero .kicker{color:var(--sand);font-size:15px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 14px}
+.hero h1{font-size:clamp(44px,11vw,116px);color:var(--gold);letter-spacing:.09em}
+.hero h1 span{display:block;font-size:.42em;letter-spacing:.3em;color:var(--text);font-weight:500;margin-top:10px}
+.crawl-stage{height:300px;width:min(720px,100%);perspective:380px;overflow:hidden;margin-top:34px;
+  -webkit-mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent)}
+.crawl{transform-origin:50% 100%;transform:rotateX(34deg);color:var(--gold);font-weight:500;font-size:22px;line-height:1.5;text-align:justify;padding:0 8%;animation:crawl 38s linear 1.2s 1 both}
+.crawl p{margin:0 0 1em}
+@keyframes crawl{from{transform:rotateX(34deg) translateY(300px)}to{transform:rotateX(34deg) translateY(-110%)}}
+.hero .skip{margin-top:18px;font-size:14px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;font-family:var(--body)}
+.hero.static .crawl{animation:none;transform:none}
+.hero.static .crawl-stage{height:auto;perspective:none;-webkit-mask-image:none;mask-image:none}
+@media (prefers-reduced-motion:reduce){.crawl{animation:none;transform:none}.crawl-stage{height:auto;perspective:none;-webkit-mask-image:none;mask-image:none}html{scroll-behavior:auto}}
+
+section{padding:70px 0}
+.sec-head{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin-bottom:26px}
+.sec-head h2{font-size:clamp(30px,5vw,48px);color:var(--gold)}
+.lede{max-width:64ch;color:var(--muted);margin:0 0 30px}
+
+/* PROCES */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0;border:1px solid var(--line)}
+.step{padding:22px 20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:-1px -1px 0 0}
+.step h3{font-size:24px;color:var(--text);margin-bottom:8px}
+.step p{margin:0;font-size:15px;color:var(--muted)}
+.step .tag{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;color:var(--bg);background:var(--gold);padding:2px 8px}
+.step.todo .tag{background:transparent;color:var(--sand);border:1px solid var(--gold-dim)}
+
+/* SHOTS */
+.shot{padding:44px 0;border-top:1px solid var(--line)}
+.shot-head{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline;margin-bottom:6px}
+.shot-head h3{font-size:clamp(26px,4vw,38px);color:var(--text)}
+.shot-head .code{color:var(--gold);font-family:var(--head);font-weight:700;font-size:22px;letter-spacing:.12em}
+.shot p.note{margin:0 0 16px;color:var(--muted);max-width:68ch;font-size:16px}
+.cmp{position:relative;aspect-ratio:2000/1130;max-width:100%;overflow:hidden;background:#000;border:1px solid var(--line);--pos:50%;user-select:none;touch-action:pan-y}
+.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cmp .top{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.cmp .line{position:absolute;top:0;bottom:0;left:var(--pos);width:2px;background:var(--gold);transform:translateX(-1px);pointer-events:none}
+.cmp .knob{position:absolute;top:50%;left:var(--pos);width:44px;height:44px;border-radius:50%;background:var(--gold);color:#120f00;display:grid;place-items:center;transform:translate(-50%,-50%);pointer-events:none;font-family:var(--head);font-weight:800;font-size:20px;letter-spacing:0}
+.cmp input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.cmp:focus-within{outline:2px solid var(--gold);outline-offset:3px}
+.cmp .lbl{position:absolute;bottom:12px;font-family:var(--head);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:15px;background:#000b;padding:3px 10px;pointer-events:none}
+.cmp .lbl.l{left:12px;color:var(--sand)}
+.cmp .lbl.r{right:12px;color:var(--gold)}
+.modelswitch{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.modelswitch span{font-size:14px;color:var(--muted);margin-right:4px}
+.chip{font-family:var(--body);font-size:14px;background:transparent;color:var(--text);border:1px solid var(--line);padding:6px 14px;cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.pending{border:1px dashed var(--gold-dim);padding:26px;margin-top:14px;color:var(--muted)}
+.pending strong{color:var(--sand);font-weight:500}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+
+/* CREDITS */
+footer{border-top:1px solid var(--line);padding:50px 0 70px;color:var(--muted);font-size:15px}
+footer h2{font-size:26px;color:var(--text);margin-bottom:12px}
+footer ul{padding-left:20px}
+footer li{margin-bottom:5px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px}
+@media (max-width:560px){body{font-size:16px}.crawl{font-size:19px}.cmp .knob{width:38px;height:38px}}
+</style>
+</head>
+<body>
+
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+  <div class="gate-card">
+    <h1 id="gate-title">Eerst even dit</h1>
+    <p>Dit is een <strong>schoolproject</strong> van studenten van de Hogeschool van Amsterdam (SMP, blok 6 Generative Video). Het is niet commercieel en niemand verdient hier iets aan.</p>
+    <ul>
+      <li>Star Wars en alles wat daarbij hoort is van Lucasfilm en Disney. Wij zijn daar niet aan verbonden en niet door hen goedgekeurd.</li>
+      <li>De beelden zijn eigen Blender renders. Een deel is daarna met AI bewerkt, dat staat er steeds bij.</li>
+      <li>Voor de 3D modellen van anderen staan de makers onderaan in de credits.</li>
+      <li>Deze pagina is bedoeld om het proces te laten zien en niet om te delen of door te plaatsen.</li>
+    </ul>
+    <button class="btn" id="gate-ok" type="button">Ik snap het, naar de omgeving</button>
+    <span class="gate-small">Je krijgt dit één keer per bezoek te zien.</span>
+  </div>
+</div>
+
+<main id="site" hidden>
+<header class="hero" id="top">
+  <p class="kicker">Een schoolproject van HvA studenten, RAI Europahal Hal 1</p>
+  <h1>Star Wars Xperience<span>Tatooine</span></h1>
+  <div class="crawl-stage" aria-label="Inleiding"><div class="crawl">
+    <p>Een stad van zand en stof rijst op in de grootste hal van Amsterdam.</p>
+    <p>Wij bouwden Mos Eisley eerst als simpel model, daarna in Blender, tot elke straat, kroeg en droidwinkel klopte met de plattegrond van de RAI.</p>
+    <p>Daarna kwam de AI. Dezelfde beelden, maar dan met de korrel, het stof en de slijtage van een echte filmset.</p>
+    <p>Scroll naar beneden en schuif zelf van render naar foto.</p>
+  </div></div>
+  <button class="skip" id="skip" type="button">Inleiding overslaan</button>
+</header>
+
+<section id="proces"><div class="wrap">
+  <div class="sec-head"><h2>Het proces</h2></div>
+  <p class="lede">Van een grijs blokkenmodel naar beelden die op een echte set lijken. Elke stap bouwt op de vorige, en de stappen die nog komen staan er open bij.</p>
+  <div class="steps">
+    <div class="step"><span class="tag">Klaar</span><h3>Grijs model</h3><p>De RAI als simpel 3D model in de browser (three.js). Hier plannen we waar welke straat en welk gebouw komt.</p></div>
+    <div class="step"><span class="tag">Klaar</span><h3>Blender</h3><p>Tatooine stad in de hal gebouwd, met huizen, cantina, droid shop, restaurant en merch. Camera's per plek.</p></div>
+    <div class="step"><span class="tag">Klaar</span><h3>AI laag</h3><p>De Blender beelden zijn met beeldmodellen omgezet naar foto's van een echte set. Twee rondes, twee modellen.</p></div>
+    <div class="step todo"><span class="tag">Volgt</span><h3>Hoge detail</h3><p>Twee shots die de AI weigerde, renderen wij zelf in Blender met meer detail en filmische belichting.</p></div>
+    <div class="step todo"><span class="tag">Volgt</span><h3>Video</h3><p>Van de foto's korte clips met lichte camerabeweging. Eerste film is Tatooine, rond de vijftien seconden.</p></div>
+  </div>
+</div></section>
+
+<section id="shots"><div class="wrap">
+  <div class="sec-head"><h2>Per plek</h2></div>
+  <p class="lede">Links de Blender render, rechts de AI versie. Sleep de schuif of gebruik de pijltjestoetsen. Indeling, camera en objecten blijven gelijk, het gaat om materiaal, licht en slijtage.</p>
+  <div id="shotlist"></div>
+
+  <div class="shot">
+    <div class="shot-head"><h3>Nog te doen</h3></div>
+    <div class="pgrid">
+      <div class="pending"><strong>SHOT 3, cantina door de zuilen</strong><br>Het beeldmodel weigerde dit shot, waarschijnlijk vanwege de droids in beeld. Dit rendert Coen zelf in Blender, met hoge detail en professionele belichting.</div>
+      <div class="pending"><strong>SHOT 4, droids close up</strong><br>Zelfde verhaal. Dit wordt een Blender render zonder AI laag, op hoge kwaliteit.</div>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap cols">
+  <div>
+    <h2>Team</h2>
+    <p>Stan Geldof, Elvin Spooren en Coen Geldof. Hogeschool van Amsterdam, SMP, blok 6 Generative Video.</p>
+    <p>Code van het grijze RAI model: <a href="https://github.com/Geldof71/STARWARS_XPERIENCE" rel="noopener">github.com/Geldof71/STARWARS_XPERIENCE</a></p>
+    <h2 style="margin-top:26px">Gereedschap</h2>
+    <p>Blender voor de 3D scène en renders. Higgsfield met GPT Image 2.6 en Nano Banana 2.1 voor de AI laag.</p>
+  </div>
+  <div>
+    <h2>Credits 3D modellen</h2>
+    <ul>
+      <li>Tatooine Styled House V2, haykal12321, CC BY 4.0</li>
+      <li>Star Wars inspired low poly buildings, ondrasaur, CC BY 4.0</li>
+      <li>Star Wars Moisture Vaporator, tegnemaskin, CC BY 4.0</li>
+      <li>Mos Housse Tower, Mos colonnes stairs en Mos Eisley Bat1 Map, michael50, CC BY 4.0</li>
+      <li>GNK Droid, Alana G, CC BY 4.0</li>
+      <li>R5-J2 Imperial Astromech Droid, Hunter Wiltse, CC BY 4.0</li>
+      <li>C-3PO en R2-D2 modellen via Blendswap, alleen voor niet commercieel gebruik</li>
+    </ul>
+    <p>Star Wars is een handelsmerk van Lucasfilm Ltd. Alleen voor onderwijsdoeleinden.</p>
+  </div>
+</div></footer>
+</main>
+
+<script>
+(function(){
+  var SHOTS=[
+   {n:'SHOT_1',code:'Shot 1',t:'Overzicht over de stad',note:'De eerste blik over Mos Eisley. Het dak van de hal blijft zichtbaar, want dit is een stad onder een hallendak.'},
+   {n:'SHOT_2',code:'Shot 2',t:'Aankomst door de poort',note:'Wat een bezoeker als eerste ziet bij binnenkomst: de poort en de straat erachter.'},
+   {n:'SHOT_5',code:'Shot 5',t:'Restaurant terras',note:'Stoelen en krukjes zagen er in de eerste AI ronde nog uit als renders. Daarom hier twee modellen naast elkaar.',alt:'ai_nano'},
+   {n:'SHOT_6',code:'Shot 6',t:'Droid shop',note:'De borden DROID SHOP en BOUW JE EIGEN DROID moeten blijven kloppen.'},
+   {n:'SHOT_7',code:'Shot 7',t:'Cantina binnen',note:'Donker, rokerig en bedompt, zoals een cantina hoort.'},
+   {n:'SHOT_8',code:'Shot 8',t:'Restaurant binnen',note:'Tweede plek waar meubels realistischer moesten. Ook hier een vergelijking van twee modellen.',alt:'ai_nano'},
+   {n:'SHOT_10',code:'Shot 10',t:'Merch shop binnen',note:'Panelen werden echte kleding en dozen, zodat het een winkel lijkt en geen set van blokken.'}
+  ];
+  var list=document.getElementById('shotlist');
+  SHOTS.forEach(function(s){
+    var d=document.createElement('div');d.className='shot';d.id=s.n.toLowerCase();
+    var html='<div class="shot-head"><span class="code">'+s.code+'</span><h3>'+s.t+'</h3></div><p class="note">'+s.note+'</p>'+
+    '<div class="cmp"><img src="img/ai/'+s.n+'.jpg" alt="AI render van '+s.t+'" class="base" loading="lazy" decoding="async">'+
+    '<img src="img/blender/'+s.n+'.jpg" alt="Blender render van '+s.t+'" class="top" loading="lazy" decoding="async">'+
+    '<div class="line"></div><div class="knob" aria-hidden="true">&#8596;</div>'+
+    '<span class="lbl l">Blender</span><span class="lbl r">AI</span>'+
+    '<input type="range" min="0" max="100" value="50" aria-label="Vergelijk Blender render en AI render van '+s.t+'"></div>';
+    if(s.alt){html+='<div class="modelswitch"><span>AI model:</span><button class="chip" type="button" aria-pressed="true" data-src="img/ai/'+s.n+'.jpg">GPT Image 2.6</button><button class="chip" type="button" aria-pressed="false" data-src="img/'+s.alt+'/'+s.n+'.jpg">Nano Banana 2.1</button></div>';}
+    d.innerHTML=html;list.appendChild(d);
+  });
+  document.querySelectorAll('.cmp').forEach(function(c){
+    var r=c.querySelector('input');
+    r.addEventListener('input',function(){c.style.setProperty('--pos',r.value+'%')});
+  });
+  document.querySelectorAll('.modelswitch').forEach(function(m){
+    var img=m.previousElementSibling.querySelector('.base');
+    m.querySelectorAll('.chip').forEach(function(b){
+      b.addEventListener('click',function(){
+        m.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed','false')});
+        b.setAttribute('aria-pressed','true');img.src=b.getAttribute('data-src');
+      });
+    });
+  });
+
+  var gate=document.getElementById('gate'),site=document.getElementById('site'),ok=document.getElementById('gate-ok');
+  function open(){gate.hidden=true;site.hidden=false;document.body.style.overflow='';window.scrollTo(0,0)}
+  var seen=false;try{seen=sessionStorage.getItem('sw_ok')==='1'}catch(e){}
+  if(seen){open()}else{document.body.style.overflow='hidden';ok.focus()}
+  ok.addEventListener('click',function(){try{sessionStorage.setItem('sw_ok','1')}catch(e){}open()});
+  document.getElementById('skip').addEventListener('click',function(){
+    document.getElementById('top').classList.add('static');
+    document.getElementById('proces').scrollIntoView();
+  });
+})();
+</script>
+</body>
+</html>
