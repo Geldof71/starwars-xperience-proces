@@ -509,7 +509,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       var an=el.animate([{clipPath:WP[kind][0]},{clipPath:WP[kind][1]}],{duration:kind==='iris'?1100:850,easing:'cubic-bezier(.6,0,.3,1)'});
       an.onfinish=fin;an.oncancel=fin;
     }else{olds.forEach(function(c){if(c.parentNode)c.remove()})}
-    stage.classList.toggle('cine',s.type!=='cmp'&&s.type!=='embed');
+    stage.classList.remove('cine');
     if(s.vo)say(s.vo);
     if(s.type==='cmp'){slide=slide||{};slide.s=s;slide.el=el;slide.range=el.querySelector('input');el.style.setProperty('--pos','100%')}
     setSeg();
