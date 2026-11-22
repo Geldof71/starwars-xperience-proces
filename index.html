@@ -61,16 +61,16 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .view[hidden]{display:none}
 
 /* intro */
-.hero{--sh:clamp(400px,60vh,760px);min-height:100vh;display:grid;align-content:start;justify-items:center;text-align:center;padding:28px 16px 24px;position:relative;overflow:hidden}
+.hero{--sh:clamp(420px,66vh,820px);min-height:100vh;display:grid;align-content:start;justify-items:center;text-align:center;padding:28px 16px 24px;position:relative;overflow:hidden}
 .hero .kicker{color:var(--sand);font-size:15px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 14px}
 .hero h1{font-size:clamp(34px,6.5vw,84px);color:var(--gold);letter-spacing:.09em}
 .hero h1 span{display:block;font-size:.42em;letter-spacing:.3em;color:var(--text);font-weight:500;margin-top:10px}
-.crawl-stage{height:var(--sh);width:min(1180px,100%);perspective:700px;overflow:hidden;margin-top:6px;
+.crawl-stage{height:var(--sh);width:min(1400px,100%);perspective:1000px;overflow:hidden;margin-top:6px;
   -webkit-mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent)}
-.crawl{transform-origin:50% 100%;transform:rotateX(34deg);color:var(--gold);font-weight:500;font-size:clamp(34px,4.8vw,70px);line-height:1.45;text-align:justify;padding:0 5%}
-.crawl.run{animation:crawl 175s linear 1.2s 1 both}
+.crawl{transform-origin:50% 100%;transform:rotateX(26deg);color:var(--gold);font-weight:500;font-size:clamp(40px,6vw,96px);line-height:1.4;text-align:justify;padding:0 5%}
+.crawl.run{animation:crawl 230s linear 1.2s 1 both}
 .crawl p{margin:0 0 1em}
-@keyframes crawl{from{transform:rotateX(34deg) translateY(var(--sh))}to{transform:rotateX(34deg) translateY(-110%)}}
+@keyframes crawl{from{transform:rotateX(26deg) translateY(var(--sh))}to{transform:rotateX(26deg) translateY(-110%)}}
 .stars{position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:repeat;
   background-image:radial-gradient(1.6px 1.6px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 90px 140px,#fff,transparent),radial-gradient(2.2px 2.2px at 160px 70px,#ffe9a8,transparent),radial-gradient(1px 1px at 230px 200px,#fff,transparent),radial-gradient(1.6px 1.6px at 300px 110px,#cfe0ff,transparent),radial-gradient(1px 1px at 60px 250px,#fff,transparent);background-size:320px 280px}
 .stars.b{background-size:210px 190px;background-position:70px 40px;animation:tw 5s ease-in-out infinite alternate}
@@ -175,7 +175,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .snd[hidden]{display:none}
 .snd:hover{background:var(--gold);color:#120f00}
 #yt-wrap{position:fixed;left:-9999px;top:0;width:220px;height:220px;overflow:hidden}
-@media (max-width:560px){body{font-size:16px}.crawl{font-size:30px}.bar nav{gap:12px}}
+@media (max-width:560px){body{font-size:16px}.crawl{font-size:38px}.bar nav{gap:12px}}
 </style>
 </head>
 <body>
