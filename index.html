@@ -248,7 +248,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 <section class="view" id="view-menu" hidden>
 <div class="wrap menu">
   <h2>Kies een aflevering</h2>
-  <p class="lede">Elke aflevering loopt vanzelf door naar de volgende. Je kunt altijd pauzeren, terug of een andere aflevering kiezen. Elke aflevering heeft een eigen link om naar te verwijzen.</p>
+  <p class="lede">Dit is het portfolio van blok 6 als film: elke aflevering hoort bij één leerdoel. De afleveringen worden stap voor stap gevuld, aflevering 1 is de pilot. Je kunt altijd pauzeren, terug of een andere aflevering kiezen. Elke aflevering heeft een eigen link om naar te verwijzen.</p>
   <div class="menu-actions">
     <a class="btn" href="#aflevering-1">Alles achter elkaar kijken</a>
     <a class="btn ghost" href="#credits">Credits</a>
@@ -384,6 +384,21 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
      txt('Binnenkort','Deze aflevering wordt ingevuld zodra de video klaar is.',6)
     ]}
   ];
+  /* de oude afleveringen 2 tot 6 bewaren we hier voor hergebruik; het portfolio heeft nu één aflevering per leerdoel */
+  var OLD=EPS.splice(1);
+  function lg(id,code,naam,rol,doel,onderdelen){return {id:id,title:code+': '+naam,sum:rol+'. '+doel,status:'In opbouw',thumb:null,
+    slides:[txt(code+' '+naam,'Beroepsrol: '+rol+'. '+doel,8),txt('Wat hier komt',onderdelen,9),txt('Nog in te vullen','Deze aflevering wordt stap voor stap gevuld. Kom later terug.',5)]}}
+  EPS.push(
+    lg(2,'MH2.3','Toekomstverkenningen','conceptontwikkelaar','Toont zelfstandig ethische aspecten van het beroepsvraagstuk en houdt er rekening mee.','Een impact assessment van het mediaformat, future worldbuilding met utopische en dystopische scenario\u2019s, en een vlog van maximaal drie minuten.'),
+    lg(3,'PV2.3','SMP Filmfestival','creative technologist','Kiest zelfstandig slimme technologie\u00ebn voor innovatieve oplossingen.','Een film van twee tot vier minuten, de iteraties van idee tot filmconcept, het script, de prompts en de generatieve video.'),
+    lg(4,'PV3.3','Onderzoeksrapport','creative technologist','Houdt rekening met de wensen van de doelgroep en de strategie van de opdrachtgever.','Verwerking van de feedback van de opdrachtgevers, een fieldresearchplan, gevisualiseerde resultaten en ontwerpaanpassingen.'),
+    lg(5,'S3.3','Creative Pivots','brainstormpartner','Vertaalt wensen en eisen naar technologische oplossingen.','Minstens vier van de zes Creative Pivots, met per pivot het resultaat, de samenwerking en de eigen bijdrage.'),
+    lg(6,'S4.3','Samenwerkingsdocumentatie','brainstormpartner','Neemt verantwoordelijkheid voor het eigen aandeel.','Samenwerkingsovereenkomst, 360 graden peerfeedback, de wekelijkse scrumplanning en een reflectievlog.'),
+    lg(7,'C1.3','Presentaties','projectmanager','Presenteert professioneel, overtuigend en creatief met een passend medium.','Presentatiemateriaal, opnames van de productdemo en de eindpresentaties, ontvangen feedback en een reflectie.'),
+    lg(8,'C4.3','10 pager','projectmanager','Rapporteert professioneel met internationale vaktaal en methodes.','Een eigen 10 pager in vrije vorm, opgebouwd volgens Understand, Create en Deliver.'),
+    lg(9,'LV1.3','POP','mediamaker van de toekomst','Reflecteert kritisch op de eigen ontwikkeling.','Het persoonlijk ontwikkelplan, een wekelijks logboek en bewijs van soft en hardskills.'),
+    lg(10,'LV4.3','Smart Gen Clubs','mediamaker van de toekomst','Reflecteert op de ethische impact van slimme technologie.','Minstens vijf Smart Gen Club formulieren, drie antwoordanalyses en het inzichtkompas.')
+  );
 
   var $=function(id){return document.getElementById(id)};
   var views=['view-intro','view-menu','view-ep','view-credits'],curView='';
@@ -392,7 +407,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   /* menu opbouwen */
   var eps=$('eps');
   EPS.forEach(function(e){
-    var a=document.createElement('a');a.className='ep'+(e.status==='Binnenkort'?' soon':'');a.href='#aflevering-'+e.id;
+    var a=document.createElement('a');a.className='ep'+((e.status==='Binnenkort'||e.status==='In opbouw')?' soon':'');a.href='#aflevering-'+e.id;
     var th=e.thumb?'<div class="th" style="background-image:url('+e.thumb+')"></div>':'<div class="th none"><b>'+e.id+'</b></div>';
     a.innerHTML=th+'<div class="body"><span class="nr">Aflevering '+e.id+'</span><h3>'+e.title+'</h3><p>'+e.sum+'</p><span class="badge">'+e.status+'</span></div>';
     eps.appendChild(a);
