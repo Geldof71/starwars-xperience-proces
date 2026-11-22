@@ -143,6 +143,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .cred p,.cred li{color:var(--muted);font-size:16px}
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px}
 
+.wipe{position:absolute;top:0;bottom:0;left:-15%;width:130%;z-index:9;pointer-events:none;background:linear-gradient(90deg,transparent 0,#000 14%,#000 84%,transparent 100%)}
 /* geluid */
 .snd{position:fixed;right:16px;bottom:16px;z-index:50;font-family:var(--head);text-transform:uppercase;letter-spacing:.12em;font-weight:700;font-size:16px;background:#000c;color:var(--gold);border:1px solid var(--gold-dim);padding:8px 16px;cursor:pointer}
 .snd[hidden]{display:none}
@@ -169,7 +170,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 </div>
 
 <div id="yt-wrap" aria-hidden="true"><div id="yt"></div></div>
-<button class="snd" id="snd" type="button" hidden aria-pressed="false">Muziek aan</button>
+<button class="snd" id="snd" type="button" aria-pressed="false" hidden>Muziek aan</button>
 
 <header class="bar" id="bar" hidden>
   <a class="brand" href="#menu">Star Wars Xperience</a>
@@ -219,6 +220,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     <button type="button" id="b-play" aria-pressed="false">Pauze</button>
     <button type="button" id="b-next" aria-label="Volgende">Volgende &#9654;&#9654;</button>
     <button type="button" id="b-auto" aria-pressed="true">Automatisch door: aan</button>
+    <button type="button" id="b-fx" aria-pressed="true">Effecten: aan</button>
     <span class="sp"></span>
     <button type="button" id="b-copy">Kopieer link</button>
     <button type="button" id="b-menu">Keuzepagina</button>
@@ -274,23 +276,33 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   function img(n,d){return {type:'img',src:'img/blender/SHOT_'+n+'.jpg',cap:SHOT[n][0],sub:SHOT[n][1],dur:d||5.5}}
   function cmp(n,alt){return {type:'cmp',n:n,cap:SHOT[n][0],alt:alt,dur:10}}
 
+  var MAIN='_D0ZQPqeJkk';
   var EPS=[
-   {id:1,title:'Het grijze model',sum:'Waar alles begint: de RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
+   {id:1,title:'De opdracht en het onderzoek',sum:'Waarom de RAI? Het onderzoek, de feedback en de keuze voor een echte locatie.',status:'Eerste versie',thumb:null,music:{id:'gXnY_tVKI1o',start:0,vol:18},
+    slides:[
+     txt('Eerst een vraag','Waar zet je een Star Wars Xperience neer? Aan het begin van de opdracht wisten we dat nog niet.',7),
+     txt('Het onderzoek','We deden onderzoek naar de plek voor de xperience.',7),
+     txt('De uitkomst','De RAI bleek de meest logische plek om dit te bouwen.',7),
+     txt('De feedback','Aan het eind van blok 5 kregen we feedback: werk concreet uit HOE de xperience wordt neergezet.',9),
+     txt('Daarom een echte locatie','Een echte hal met een echte plattegrond maakt het concreet. Zo zie je wat het wordt.',9),
+     txt('Wat we willen doen','Een Tatooine stad in Hal 1 van de RAI, eerst als model, daarna als render en straks als film.',8)
+    ]},
+   {id:2,title:'Het grijze model',sum:'De RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
     slides:[
      txt('Voor er zand was, waren er blokken','Een grijs model van Hal 1 van de RAI. Hier bepaalden we waar de straten, de cantina en de poort moeten komen.',8),
      {type:'embed',src:'rai_grijs_model.html',cap:'Interactief: draai, zoom en loop zelf door de hal',manual:true},
      txt('Van blok naar gebouw','Elk blok in dit model kreeg een Tatooine gebouw. Dat bouwden we in Blender.',6)
     ]},
-   {id:2,title:'De stad in Blender',sum:'Mos Eisley in de hal, zoals de camera het ziet. Zeven plekken.',status:'Klaar',thumb:'img/blender/SHOT_1.jpg',
+   {id:3,title:'De stad in Blender',sum:'Mos Eisley in de hal, zoals de camera het ziet. Zeven plekken.',status:'Klaar',thumb:'img/blender/SHOT_1.jpg',
     slides:[txt('Mos Eisley in Hal 1','Huizen, een cantina, een droid shop, een restaurant en een merch shop. Gebouwd in Blender, met een camera per plek.',7)].concat(ORDER.map(function(n){return img(n)}))},
-   {id:3,title:'Van render naar foto',sum:'Dezelfde beelden, omgezet naar foto’s van een echte set. Schuif zelf mee.',status:'Klaar',thumb:'img/ai/SHOT_2.jpg',
+   {id:4,title:'Van render naar foto',sum:'Dezelfde beelden, omgezet naar foto\u2019s van een echte set. Schuif zelf mee.',status:'Klaar',thumb:'img/ai/SHOT_2.jpg',
     slides:[txt('Dezelfde stad, andere look','Indeling, camera en objecten blijven gelijk. De AI verandert materiaal, licht en slijtage. Links Blender, rechts AI.',8)].concat(ORDER.map(function(n){return cmp(n,(n===5||n===8)?'img/ai_nano/SHOT_'+n+'.jpg':null)}))},
-   {id:4,title:'Wat de AI niet wilde',sum:'Twee shots werden geweigerd. Die renderen we zelf, op hoge kwaliteit.',status:'Binnenkort',thumb:null,
+   {id:5,title:'Wat de AI niet wilde',sum:'Twee shots werden geweigerd. Die renderen we zelf, op hoge kwaliteit.',status:'Binnenkort',thumb:null,
     slides:[
      txt('Twee shots, geweigerd','Het beeldmodel weigerde SHOT 3, de cantina door de zuilen, en SHOT 4, de droids van dichtbij. Waarschijnlijk vanwege de droids in beeld.',9),
      txt('Dan doen we het zelf','Die twee renderen we in Blender met meer detail en professionele belichting, zonder AI laag. Dit is nog in de maak.',8)
     ]},
-   {id:5,title:'De video',sum:'Van foto’s naar bewegend beeld. De eerste film is Tatooine.',status:'Binnenkort',thumb:null,
+   {id:6,title:'De video',sum:'Van foto\u2019s naar bewegend beeld. De eerste film is Tatooine.',status:'Binnenkort',thumb:null,
     slides:[
      txt('Van stilstaand naar bewegend','Van elke foto komt een korte clip met lichte camerabeweging. De eerste film is Tatooine, rond de vijftien seconden.',9),
      txt('Binnenkort','Deze aflevering wordt ingevuld zodra de video klaar is.',6)
@@ -304,7 +316,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   /* menu opbouwen */
   var eps=$('eps');
   EPS.forEach(function(e){
-    var a=document.createElement('a');a.className='ep'+(e.status==='Klaar'?'':' soon');a.href='#aflevering-'+e.id;
+    var a=document.createElement('a');a.className='ep'+(e.status==='Binnenkort'?' soon':'');a.href='#aflevering-'+e.id;
     var th=e.thumb?'<div class="th" style="background-image:url('+e.thumb+')"></div>':'<div class="th none"><b>'+e.id+'</b></div>';
     a.innerHTML=th+'<div class="body"><span class="nr">Aflevering '+e.id+'</span><h3>'+e.title+'</h3><p>'+e.sum+'</p><span class="badge">'+e.status+'</span></div>';
     eps.appendChild(a);
@@ -320,6 +332,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   /* speler */
   var cur={ep:null,i:0},paused=false,auto=true,held=false,elapsed=0,last=0,raf=0,cd=null,slide=null,pos=100;
   var stage=$('stage'),segs=$('segs');
+  var tok=0,ac=null,fx=true,noiseBuf=null;
   function stopLoop(){cancelAnimationFrame(raf);raf=0;clearInterval(cd);cd=null}
   function setSeg(){
     var bs=segs.children;
@@ -358,10 +371,36 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     }
     return d;
   }
+  function ensureAC(){
+    if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){ac=null}}
+    if(ac&&ac.state==='suspended'){try{ac.resume()}catch(e){}}
+  }
+  function whoosh(){
+    if(!fx)return;ensureAC();if(!ac||ac.state!=='running')return;
+    var t=ac.currentTime,d=.75;
+    if(!noiseBuf){noiseBuf=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);var ch=noiseBuf.getChannelData(0);for(var i=0;i<ch.length;i++)ch[i]=Math.random()*2-1}
+    var n=ac.createBufferSource();n.buffer=noiseBuf;n.loop=true;
+    var f=ac.createBiquadFilter();f.type='bandpass';f.Q.value=1.4;
+    f.frequency.setValueAtTime(250,t);f.frequency.exponentialRampToValueAtTime(3800,t+d*.5);f.frequency.exponentialRampToValueAtTime(700,t+d);
+    var g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.28,t+d*.45);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    n.connect(f);f.connect(g);g.connect(ac.destination);n.start(t);n.stop(t+d+.05);
+  }
+  function wipeThen(fn){
+    var my=++tok;whoosh();
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if(reduce||!stage.firstChild){fn();return}
+    stopLoop();
+    Array.prototype.slice.call(stage.querySelectorAll('.wipe')).forEach(function(x){x.remove()});
+    var w=document.createElement('div');w.className='wipe';stage.appendChild(w);
+    var an=w.animate([{transform:'translateX(-100%) skewX(-16deg)'},{transform:'translateX(100%) skewX(-16deg)'}],{duration:720,easing:'ease-in-out'});
+    an.onfinish=function(){w.remove()};
+    setTimeout(function(){if(my===tok)fn()},330);
+  }
+  function go(i){wipeThen(function(){goto(i)})}
   function goto(i){
     stopLoop();var e=EPS[cur.ep];i=Math.max(0,Math.min(e.slides.length-1,i));cur.i=i;
     var s=e.slides[i];slide=null;held=false;elapsed=0;last=0;pos=100;
-    stage.innerHTML='';var el=buildSlide(s);stage.appendChild(el);
+    Array.prototype.slice.call(stage.children).forEach(function(c){if(!c.classList.contains('wipe'))c.remove()});var el=buildSlide(s);stage.insertBefore(el,stage.firstChild);
     if(s.type==='cmp'){slide=slide||{};slide.s=s;slide.el=el;slide.range=el.querySelector('input');el.style.setProperty('--pos','100%')}
     setSeg();
     var manual=!!s.manual;
@@ -384,10 +423,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   }
   function next(){
     var e=EPS[cur.ep];
-    if(cur.i<e.slides.length-1){goto(cur.i+1)}else{endCard()}
+    if(cur.i<e.slides.length-1){go(cur.i+1)}else{endCard()}
   }
   function prev(){
-    if(elapsed>2||cur.i===0){goto(cur.i)}else{goto(cur.i-1)}
+    if(elapsed>2||cur.i===0){go(cur.i)}else{go(cur.i-1)}
   }
   function endCard(){
     stopLoop();prog(1);
@@ -407,14 +446,15 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     var e=EPS[idx];cur.ep=idx;paused=false;
     $('p-nr').textContent='Aflevering '+e.id;$('p-title').textContent=e.title;
     segs.innerHTML='';
-    e.slides.forEach(function(s,k){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ga naar onderdeel '+(k+1));b.innerHTML='<i></i>';b.onclick=function(){goto(k)};segs.appendChild(b)});
+    e.slides.forEach(function(s,k){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ga naar onderdeel '+(k+1));b.innerHTML='<i></i>';b.onclick=function(){go(k)};segs.appendChild(b)});
     $('b-play').textContent='Pauze';$('b-play').setAttribute('aria-pressed','false');
-    show('view-ep');goto(0);
+    show('view-ep');go(0);
   }
   $('b-prev').onclick=prev;
   $('b-next').onclick=next;
   $('b-play').onclick=function(){paused=!paused;this.textContent=paused?'Verder afspelen':'Pauze';this.setAttribute('aria-pressed',paused?'true':'false')};
   $('b-auto').onclick=function(){auto=!auto;this.textContent='Automatisch door: '+(auto?'aan':'uit');this.setAttribute('aria-pressed',auto?'true':'false')};
+  $('b-fx').onclick=function(){fx=!fx;this.textContent='Effecten: '+(fx?'aan':'uit');this.setAttribute('aria-pressed',fx?'true':'false')};
   $('b-menu').onclick=function(){location.hash='menu'};
   $('b-copy').onclick=function(){
     var u=location.href.split('#')[0]+'#aflevering-'+EPS[cur.ep].id,b=this;
@@ -427,64 +467,75 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     if(ev.key==='ArrowRight'){next()}else if(ev.key==='ArrowLeft'){prev()}else if(ev.key===' '){ev.preventDefault();$('b-play').click()}
   });
 
-  /* intro en geluid */
-  var VID='_D0ZQPqeJkk',player=null,fadeT=null,musicOn=false,introTimer=null,menuTimer=null;
+  /* muziek */
+  var player=null,ready=false,fadeT=null,musicOn=false,menuTimer=null,curId=null,want={id:MAIN,start:0,vol:40};
   function setBtn(){snd.textContent=musicOn?'Muziek uit':'Muziek aan';snd.setAttribute('aria-pressed',musicOn?'true':'false')}
   function fade(to,done){
-    if(!player||!player.getVolume)return;clearInterval(fadeT);
+    if(!ready||!player||!player.getVolume)return;clearInterval(fadeT);
     fadeT=setInterval(function(){
-      var v=player.getVolume(),n=v<to?Math.min(to,v+3):Math.max(to,v-3);
+      var v=player.getVolume(),n=v<to?Math.min(to,v+2):Math.max(to,v-2);
       player.setVolume(n);
       if(n===to){clearInterval(fadeT);if(done)done()}
-    },90);
+    },80);
   }
+  function applyTrack(){
+    if(!musicOn||!ready)return;
+    if(curId!==want.id){curId=want.id;player.setVolume(0);player.loadVideoById({videoId:want.id,startSeconds:want.start||0});fade(want.vol)}
+    else{try{player.playVideo()}catch(e){}fade(want.vol)}
+  }
+  function setTrack(id,start,vol){want={id:id,start:start||0,vol:vol};applyTrack()}
   function startMusic(){
-    musicOn=true;setBtn();snd.hidden=(curView!=='view-intro');
-    if(player&&player.playVideo){player.setVolume(0);player.playVideo();fade(40);return}
+    musicOn=true;setBtn();
+    if(player){applyTrack();return}
+    var initial=want.id;
     function make(){
-      player=new YT.Player('yt',{width:'220',height:'220',videoId:VID,
-        playerVars:{autoplay:1,controls:0,disablekb:1,playsinline:1,rel:0,loop:1,playlist:VID},
-        events:{onReady:function(e){e.target.setVolume(0);e.target.playVideo();fade(40)}}});
+      player=new YT.Player('yt',{width:'220',height:'220',videoId:initial,
+        playerVars:{autoplay:1,controls:0,disablekb:1,playsinline:1,rel:0},
+        events:{
+          onReady:function(e){ready=true;curId=initial;e.target.setVolume(0);applyTrack()},
+          onStateChange:function(e){if(e.data===0){try{player.seekTo(want.start||0);player.playVideo()}catch(x){}}}
+        }});
     }
     if(window.YT&&YT.Player){make()}else{
       window.onYouTubeIframeAPIReady=make;
       var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
     }
-    clearTimeout(introTimer);introTimer=setTimeout(stopMusic,57000);
   }
-  function stopMusic(){
-    clearTimeout(introTimer);musicOn=false;setBtn();
-    fade(0,function(){try{player.pauseVideo()}catch(e){}});
-  }
+  function stopMusic(){musicOn=false;setBtn();fade(0,function(){try{player.pauseVideo()}catch(e){}})}
   snd.addEventListener('click',function(){if(musicOn){stopMusic()}else{startMusic()}});
+
+  /* intro */
   var crawl=$('crawl');
   crawl.addEventListener('animationend',function(){
-    stopMusic();clearTimeout(menuTimer);
+    clearTimeout(menuTimer);
     menuTimer=setTimeout(function(){if(curView==='view-intro')location.hash='menu'},2500);
   });
   function startIntro(){
     var hero=$('hero');hero.classList.remove('static');
     crawl.classList.remove('run');void crawl.offsetWidth;crawl.classList.add('run');
-    snd.hidden=false;setBtn();
   }
 
   /* routering */
   function route(){
-    stopLoop();clearTimeout(menuTimer);
+    tok++;stopLoop();clearTimeout(menuTimer);
     var h=location.hash.replace('#','')||'intro',m=/^aflevering-(\d+)$/.exec(h);
-    if(m&&EPS[+m[1]-1]){openEp(+m[1]-1);snd.hidden=true;if(musicOn)stopMusic()}
-    else if(h==='menu'){show('view-menu');snd.hidden=true;if(musicOn)stopMusic()}
-    else if(h==='credits'){show('view-credits');snd.hidden=true;if(musicOn)stopMusic()}
-    else{show('view-intro');startIntro()}
+    if(m&&EPS[+m[1]-1]){
+      var ep=EPS[+m[1]-1],mu=ep.music||{id:MAIN,start:0,vol:18};
+      setTrack(mu.id,mu.start,mu.vol);openEp(+m[1]-1);
+    }
+    else if(h==='menu'){setTrack(MAIN,0,18);show('view-menu')}
+    else if(h==='credits'){setTrack(MAIN,0,18);show('view-credits')}
+    else{setTrack(MAIN,0,40);show('view-intro');startIntro()}
   }
   window.addEventListener('hashchange',route);
 
   /* poort */
   var gate=$('gate'),site=$('site'),ok=$('gate-ok');
-  function enter(withMusic){
-    gate.hidden=true;site.hidden=false;document.body.style.overflow='';
+  function enter(gesture){
+    gate.hidden=true;site.hidden=false;document.body.style.overflow='';snd.hidden=false;setBtn();
+    if(gesture)ensureAC();
     route();
-    if(withMusic&&curView==='view-intro')startMusic();
+    if(gesture)startMusic();
   }
   var seen=false;try{seen=sessionStorage.getItem('sw_ok')==='1'}catch(e){}
   if(seen){enter(false)}else{document.body.style.overflow='hidden';ok.focus()}
