@@ -108,7 +108,28 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .sl{position:absolute;inset:0}
 .sl.text{display:grid;place-content:center;padding:clamp(20px,6vw,80px);text-align:center;gap:16px}
 .sl.text h3{font-size:clamp(28px,5.5vw,64px);color:var(--gold)}
-.sl.text p{font-size:clamp(16px,2.2vw,26px);max-width:34em;margin:0 auto;color:var(--text)}
+.sl.text p{font-size:clamp(19px,2.9vw,38px);max-width:30em;margin:0 auto;color:var(--text);line-height:1.4}
+.sl.text>h3,.sl.text>p{position:relative;z-index:1}
+.sl.text.hasbg{background:#000}
+.sl.text .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.34;animation:kb linear both;z-index:0}
+.sl.text.hasbg:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 20%,#000 95%);z-index:0}
+.sl.bars,.sl.facts{display:grid;align-content:center;gap:clamp(10px,2vw,22px);padding:clamp(16px,4vw,60px)}
+.sl.bars h3,.sl.facts h3{font-size:clamp(26px,4.6vw,56px);color:var(--gold);text-align:center;margin-bottom:6px}
+.brow{display:grid;grid-template-columns:minmax(110px,27%) 1fr;align-items:center;gap:14px}
+.brow .lb{font-family:var(--head);font-weight:700;letter-spacing:.06em;font-size:clamp(15px,2.2vw,28px);color:var(--text);text-align:right}
+.brow .tr{position:relative;height:clamp(26px,4.6vw,54px);background:#15121a}
+.brow .tr i{position:absolute;left:0;top:0;bottom:0;width:calc(var(--w)*1%);background:var(--sand);opacity:.75;transform:scaleX(0);transform-origin:0 50%;animation:grow 1.3s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--k)*.28s + .3s)}
+.brow.hl .tr i{background:var(--gold);opacity:1}
+.brow .vl{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-family:var(--head);font-weight:700;font-size:clamp(14px,2.2vw,28px);color:#120f00;mix-blend-mode:normal;white-space:nowrap}
+.brow:not(.hl) .vl{color:var(--text)}
+.sl.bars .note,.sl.facts .note{text-align:center;color:var(--muted);font-size:clamp(12px,1.5vw,16px);margin:6px 0 0}
+@keyframes grow{to{transform:scaleX(1)}}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:clamp(10px,2vw,22px)}
+.fc{border:1px solid var(--gold-dim);background:#0d0a12;padding:clamp(12px,2.4vw,30px);text-align:center;opacity:0;transform:translateY(14px);animation:pop .7s ease-out forwards;animation-delay:calc(var(--k)*.3s + .2s)}
+.fc b{display:block;font-family:var(--head);font-weight:700;font-size:clamp(28px,5.4vw,72px);color:var(--gold);line-height:1.05}
+.fc span{display:block;margin-top:8px;font-size:clamp(13px,1.9vw,22px);color:var(--text)}
+@keyframes pop{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.brow .tr i{animation:none;transform:none}.fc{animation:none;opacity:1;transform:none}.sl.text .bgimg{animation:none}}
 .sl.img img{width:100%;height:100%;object-fit:cover;transform-origin:50% 50%;animation:kb linear both}
 @keyframes kb{from{transform:scale(1)}to{transform:scale(1.07)}}
 @media (prefers-reduced-motion:reduce){.sl.img img{animation:none}}
@@ -249,9 +270,11 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       <p>Blender voor de 3D scène en renders. Higgsfield met GPT Image 2.6 en Nano Banana 2.1 voor de AI laag. three.js voor het interactieve grijze model.</p>
       <p>Code van het grijze RAI model: <a href="https://github.com/Geldof71/STARWARS_XPERIENCE" rel="noopener">github.com/Geldof71/STARWARS_XPERIENCE</a></p>
       <h3>Muziek</h3>
-      <p>Star Wars Episode I Soundtrack: Main Title and The Arrival at Naboo, en Watto\u2019s Deal and Kids at Play. De muziek is van John Williams, uitgegeven door Sony Classical. Alleen gebruikt in dit niet commerciële schoolproject.</p>
+      <p>Star Wars Episode I Soundtrack: Main Title and The Arrival at Naboo, en Watto’s Deal and Kids at Play. De muziek is van John Williams, uitgegeven door Sony Classical. Alleen gebruikt in dit niet commerciële schoolproject.</p>
     </div>
     <div>
+      <h3>Bronnen locatie onderzoek</h3>
+      <p>RAI Amsterdam: rai.nl (plattegrond en vloerbelasting) en Wikipedia (totale oppervlakte, capaciteit, rijksmonument). Rotterdam Ahoy: ahoy.nl en locaties.nl. Brabanthallen: technische specificaties op locaties.nl. Expo Greater Amsterdam: factsheet van Libema. Jaarbeurs Utrecht: jaarbeurs.nl. MECC Maastricht: lijst van congrescentra op Wikipedia. Bereikbaarheid: AEO. Alle oppervlaktes zijn afgerond en door de locaties zelf opgegeven, dus indicatief.</p>
       <h3>3D modellen</h3>
       <ul>
         <li>Tatooine Styled House V2, haykal12321, CC BY 4.0</li>
@@ -282,7 +305,9 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     10:['Merch shop binnen','Kleding en dozen in plaats van blokken.']
   };
   var ORDER=[1,2,5,6,7,8,10];
-  function txt(t,b,d){return {type:'text',title:t,body:b,dur:d||7}}
+  function txt(t,b,d,bg){return {type:'text',title:t,body:b,dur:d||7,bg:bg}}
+  function bars(t,rows,note,d){return {type:'bars',title:t,rows:rows,note:note,dur:d||11}}
+  function facts(t,items,note,d){return {type:'facts',title:t,items:items,note:note,dur:d||10}}
   function img(n,d){return {type:'img',src:'img/blender/SHOT_'+n+'.jpg',cap:SHOT[n][0],sub:SHOT[n][1],dur:d||5.5}}
   function cmp(n,alt){return {type:'cmp',n:n,cap:SHOT[n][0],alt:alt,dur:10}}
 
@@ -290,18 +315,21 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   var EPS=[
    {id:1,title:'De missie: de RAI',sum:'Van concept naar concrete plek. Waarom de RAI, het model, Blender, de AI laag en de video.',status:'Eerste versie',thumb:'img/blender/SHOT_1.jpg',music:{id:'muziek/watto.mp3',start:0,vol:18},
     slides:[
-     txt('De missie','Na het afronden van blok 5 hadden we \u00e9\u00e9n missie: onze concepten concreet maken.',6),
-     txt('Hoe gaan we dat doen?','Een concrete locatie is het begin. Waar beginnen we?',6),
-     txt('De RAI in Amsterdam','Groot, goed bereikbaar, midden in de hoofdstad en niet onbekend met beurzen.',7),
-     txt('Dit moest het worden','De RAI. Die gaan we nabouwen.',5),
+     txt('De missie','Na het afronden van blok 5 hadden we \u00e9\u00e9n missie: onze concepten concreet maken.',6,'img/blender/SHOT_1.jpg'),
+     txt('Hoe gaan we dat doen?','Een concrete locatie is het begin. Waar beginnen we?',6,'img/blender/SHOT_2.jpg'),
+     facts('Waarom de RAI?',[['15.000 m\u00b2','Europahal (Hal 1), alleen de hal zelf'],['12.900','bezoekers volgens Wikipedia'],['Rijksmonument','sinds 2015'],['3.000 kg/m\u00b2','maximale vloerbelasting Hal 1']],'Bronnen: rai.nl en Wikipedia. Zie Credits.',10),
+     bars('Hal 1 tegen Hal 1',[{l:'RAI Amsterdam',v:15000,hl:1},{l:'Rotterdam Ahoy',v:9940},{l:'Brabanthallen Den Bosch',v:9190},{l:'Expo Greater Amsterdam',v:6434}],'Eerste hal van elke locatie. Indicatief: de locaties meten zelf, zie Credits.',11),
+     bars('Totaal vloeroppervlak',[{l:'RAI Amsterdam',v:112200,hl:1},{l:'Jaarbeurs Utrecht',v:90000,p:'ruim '},{l:'Rotterdam Ahoy',v:90000},{l:'Brabanthallen',v:55000},{l:'MECC Maastricht',v:30000}],'Beurs en congresruimte, afgerond. Zie Credits voor bronnen.',11),
+     facts('En goed bereikbaar',[['Eigen station','Amsterdam RAI, met metro en tram'],['12 min','vanaf het centrum van Amsterdam'],['8 min','vanaf Schiphol']],'Bron: AEO en de plattegrond van de RAI. Zie Credits.',9),
+     txt('Dit moest het worden','De RAI. Die gaan we nabouwen.',5,'img/blender/SHOT_5.jpg'),
      txt('Claude, onze droid','We lieten Claude een compleet onderzoek doen om de RAI na te bouwen in HTML code.',7),
      {type:'embed',src:'rai_grijs_model.html',cap:'Het resultaat: de RAI als grijs model. Draai, zoom en loop zelf rond.',manual:true},
-     txt('Tatooine in Hal 1','De Europahal richten we in als hoofdhal: de wereld van Tatooine.',6),
+     txt('Tatooine in Hal 1','De Europahal richten we in als hoofdhal: de wereld van Tatooine.',6,'img/blender/SHOT_6.jpg'),
      txt('Naar Blender','Dit zetten we om naar een Blender project. Eerst nog ruw.',6),
      img(1,6),
      txt('De AI laag','Daarna de eerste renders, en daaroverheen een AI laag. Links Blender, rechts AI.',6),
      cmp(2),
-     txt('En dan de video','Hoe het er uit kan zien, in beweging. Die maken we nog af.',7)
+     txt('En dan de video','Hoe het er uit kan zien, in beweging. Die maken we nog af.',7,'img/ai/SHOT_8.jpg')
     ]},
    {id:2,title:'Het grijze model',sum:'De RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
     slides:[
@@ -358,7 +386,28 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   function ease(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2}
   function buildSlide(s){
     var d=document.createElement('div');d.className='sl '+s.type;
-    if(s.type==='text'){d.innerHTML='<h3></h3><p></p>';d.firstChild.textContent=s.title;d.lastChild.textContent=s.body}
+    if(s.type==='text'){
+      d.innerHTML='<h3></h3><p></p>';d.firstChild.textContent=s.title;d.lastChild.textContent=s.body;
+      if(s.bg){d.classList.add('hasbg');var bi=document.createElement('img');bi.className='bgimg';bi.alt='';bi.src=s.bg;bi.style.animationDuration=s.dur+'s';d.insertBefore(bi,d.firstChild)}
+    }
+    else if(s.type==='bars'){
+      var mx=Math.max.apply(null,s.rows.map(function(r){return r.v}));
+      d.innerHTML='<h3></h3><div class="brs"></div><p class="note"></p>';
+      d.querySelector('h3').textContent=s.title;d.querySelector('.note').textContent=s.note||'';
+      var box=d.querySelector('.brs');box.style.display='grid';box.style.gap='clamp(8px,1.6vw,18px)';
+      s.rows.forEach(function(r,k){
+        var row=document.createElement('div');row.className='brow'+(r.hl?' hl':'');row.style.setProperty('--k',k);
+        row.innerHTML='<div class="lb"></div><div class="tr"><i></i><span class="vl"></span></div>';
+        row.querySelector('.lb').textContent=r.l;row.querySelector('.vl').textContent=(r.p||'')+r.v.toLocaleString('nl-NL')+' m\u00b2';
+        row.querySelector('i').style.setProperty('--w',(r.v/mx*100).toFixed(1));
+        box.appendChild(row);
+      });
+    }
+    else if(s.type==='facts'){
+      d.innerHTML='<h3></h3><div class="fgrid"></div><p class="note"></p>';
+      d.querySelector('h3').textContent=s.title;d.querySelector('.note').textContent=s.note||'';
+      s.items.forEach(function(it,k){var c=document.createElement('div');c.className='fc';c.style.setProperty('--k',k);c.innerHTML='<b></b><span></span>';c.firstChild.textContent=it[0];c.lastChild.textContent=it[1];d.querySelector('.fgrid').appendChild(c)});
+    }
     else if(s.type==='img'){
       d.innerHTML='<img alt=""><div class="cap"></div>';var im=d.firstChild;im.src=s.src;im.alt='Blender render: '+s.cap;im.style.animationDuration=s.dur+'s';
       d.lastChild.innerHTML=s.cap+'<small>'+s.sub+'</small>';
