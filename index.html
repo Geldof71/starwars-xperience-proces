@@ -68,9 +68,9 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .crawl-stage{height:var(--sh);width:min(740px,92%);perspective:900px;overflow:hidden;margin-top:6px;position:relative;
   -webkit-mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent)}
 .crawl{position:absolute;left:0;right:0;top:100%;transform-origin:50% 0;transform:rotateX(26deg);color:var(--gold);font-weight:500;font-size:clamp(26px,3.6vw,52px);line-height:1.4;text-align:justify;padding:0 5%}
-.crawl.run{animation:crawl 230s linear 1.2s 1 both}
+.crawl.run{animation:crawl 150s linear .5s 1 both}
 .crawl p{margin:0 0 1em}
-@keyframes crawl{from{transform:rotateX(26deg) translateY(0)}to{transform:rotateX(26deg) translateY(calc(-100% - var(--sh)))}}
+@keyframes crawl{from{transform:rotateX(26deg) translateY(calc(var(--sh) * -.45))}to{transform:rotateX(26deg) translateY(calc(-100% - var(--sh)))}}
 .stars{position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:repeat;
   background-image:radial-gradient(1.6px 1.6px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 90px 140px,#fff,transparent),radial-gradient(2.2px 2.2px at 160px 70px,#ffe9a8,transparent),radial-gradient(1px 1px at 230px 200px,#fff,transparent),radial-gradient(1.6px 1.6px at 300px 110px,#cfe0ff,transparent),radial-gradient(1px 1px at 60px 250px,#fff,transparent);background-size:320px 280px}
 .stars.b{background-size:210px 190px;background-position:70px 40px;animation:tw 5s ease-in-out infinite alternate}
