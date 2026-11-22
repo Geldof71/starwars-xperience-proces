@@ -169,7 +169,6 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   </div>
 </div>
 
-<div id="yt-wrap" aria-hidden="true"><div id="yt"></div></div>
 <button class="snd" id="snd" type="button" aria-pressed="false" hidden>Muziek aan</button>
 
 <header class="bar" id="bar" hidden>
@@ -239,7 +238,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       <p>Blender voor de 3D scène en renders. Higgsfield met GPT Image 2.6 en Nano Banana 2.1 voor de AI laag. three.js voor het interactieve grijze model.</p>
       <p>Code van het grijze RAI model: <a href="https://github.com/Geldof71/STARWARS_XPERIENCE" rel="noopener">github.com/Geldof71/STARWARS_XPERIENCE</a></p>
       <h3>Muziek</h3>
-      <p>Star Wars Main Theme (Full), kanaal Coltsrock56 op YouTube, afgespeeld via de YouTube speler. De muziek is van John Williams.</p>
+      <p>Star Wars Episode I Soundtrack, Star Wars Main Title and The Arrival at Naboo. De muziek is van John Williams, uitgegeven door Sony Classical. Alleen gebruikt in dit niet commerciële schoolproject.</p>
     </div>
     <div>
       <h3>3D modellen</h3>
@@ -467,41 +466,25 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     if(ev.key==='ArrowRight'){next()}else if(ev.key==='ArrowLeft'){prev()}else if(ev.key===' '){ev.preventDefault();$('b-play').click()}
   });
 
-  /* muziek */
-  var player=null,ready=false,fadeT=null,musicOn=false,menuTimer=null,curId=null,want={id:MAIN,start:0,vol:40};
+  /* muziek: eigen mp3, geen YouTube meer (geen reclames) */
+  var au=new Audio('muziek/star_wars_main.mp3');au.loop=true;au.preload='auto';au.volume=0;
+  var fadeT=null,musicOn=false,menuTimer=null,want={vol:.4};
   function setBtn(){snd.textContent=musicOn?'Muziek uit':'Muziek aan';snd.setAttribute('aria-pressed',musicOn?'true':'false')}
   function fade(to,done){
-    if(!ready||!player||!player.getVolume)return;clearInterval(fadeT);
+    clearInterval(fadeT);
     fadeT=setInterval(function(){
-      var v=player.getVolume(),n=v<to?Math.min(to,v+2):Math.max(to,v-2);
-      player.setVolume(n);
-      if(n===to){clearInterval(fadeT);if(done)done()}
+      var v=au.volume,n=v<to?Math.min(to,v+.02):Math.max(to,v-.02);
+      au.volume=Math.max(0,Math.min(1,n));
+      if(Math.abs(n-to)<.001){au.volume=Math.max(0,Math.min(1,to));clearInterval(fadeT);if(done)done()}
     },80);
   }
-  function applyTrack(){
-    if(!musicOn||!ready)return;
-    if(curId!==want.id){curId=want.id;player.setVolume(0);player.loadVideoById({videoId:want.id,startSeconds:want.start||0});fade(want.vol)}
-    else{try{player.playVideo()}catch(e){}fade(want.vol)}
-  }
-  function setTrack(id,start,vol){want={id:id,start:start||0,vol:vol};applyTrack()}
+  function setTrack(id,start,vol){want={vol:(vol||18)/100};if(musicOn)fade(want.vol)}
   function startMusic(){
     musicOn=true;setBtn();
-    if(player){applyTrack();return}
-    var initial=want.id;
-    function make(){
-      player=new YT.Player('yt',{width:'220',height:'220',videoId:initial,
-        playerVars:{autoplay:1,controls:0,disablekb:1,playsinline:1,rel:0},
-        events:{
-          onReady:function(e){ready=true;curId=initial;e.target.setVolume(0);applyTrack()},
-          onStateChange:function(e){if(e.data===0){try{player.seekTo(want.start||0);player.playVideo()}catch(x){}}}
-        }});
-    }
-    if(window.YT&&YT.Player){make()}else{
-      window.onYouTubeIframeAPIReady=make;
-      var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
-    }
+    var p=au.play();if(p&&p.catch)p.catch(function(){});
+    fade(want.vol);
   }
-  function stopMusic(){musicOn=false;setBtn();fade(0,function(){try{player.pauseVideo()}catch(e){}})}
+  function stopMusic(){musicOn=false;setBtn();fade(0,function(){au.pause()})}
   snd.addEventListener('click',function(){if(musicOn){stopMusic()}else{startMusic()}});
 
   /* intro */
