@@ -68,7 +68,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .crawl-stage{height:300px;width:min(720px,100%);perspective:380px;overflow:hidden;margin-top:34px;
   -webkit-mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 70%,transparent)}
 .crawl{transform-origin:50% 100%;transform:rotateX(34deg);color:var(--gold);font-weight:500;font-size:22px;line-height:1.5;text-align:justify;padding:0 8%}
-.crawl.run{animation:crawl 38s linear 1.2s 1 both}
+.crawl.run{animation:crawl 54s linear 1.2s 1 both}
 .crawl p{margin:0 0 1em}
 @keyframes crawl{from{transform:rotateX(34deg) translateY(300px)}to{transform:rotateX(34deg) translateY(-110%)}}
 .hero-actions{margin-top:20px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center}
@@ -183,10 +183,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   <p class="kicker">Een schoolproject van HvA studenten, RAI Europahal Hal 1</p>
   <h1>Star Wars Xperience<span>Tatooine</span></h1>
   <div class="crawl-stage" aria-label="Inleiding"><div class="crawl" id="crawl">
-    <p>Een stad van zand en stof rijst op in de grootste hal van Amsterdam.</p>
-    <p>Wij bouwden Mos Eisley eerst als simpel grijs model, daarna in Blender, tot elke straat, kroeg en droidwinkel klopte met de plattegrond van de RAI.</p>
-    <p>Daarna kwam de AI. Dezelfde beelden, maar dan met de korrel, het stof en de slijtage van een echte filmset.</p>
-    <p>Dit is het hele proces, in afleveringen. Kijk ze achter elkaar, of kies zelf.</p>
+    <p>Het is blok 5 op de SMP opleiding van de Hogeschool van Amsterdam. Twee mannen lopen de school binnen, met een missie.</p>
+    <p>Ze willen een Star Wars Xperience maken. Een hele wereld onder één dak, in de grootste hal van de RAI.</p>
+    <p>Ruim twee blokken lang werken drie Jedi’s aan die missie: Coen, Elvin en Stan.</p>
+    <p>Hun doel: de totale xperience zo in beeld brengen dat meteen duidelijk is wat de potentie van deze opdracht is.</p>
+    <p>In deze setting zie je het hele proces. Van grijs blokkenmodel tot Blender, van render tot AI foto, en straks tot film.</p>
+    <p>Kijk de afleveringen achter elkaar, of kies zelf.</p>
   </div></div>
   <div class="hero-actions">
     <a class="btn" href="#menu" id="to-menu">Naar de afleveringen</a>
@@ -448,7 +450,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       window.onYouTubeIframeAPIReady=make;
       var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
     }
-    clearTimeout(introTimer);introTimer=setTimeout(stopMusic,42000);
+    clearTimeout(introTimer);introTimer=setTimeout(stopMusic,57000);
   }
   function stopMusic(){
     clearTimeout(introTimer);musicOn=false;setBtn();
