@@ -109,6 +109,9 @@ footer h2{font-size:26px;color:var(--text);margin-bottom:12px}
 footer ul{padding-left:20px}
 footer li{margin-bottom:5px}
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px}
+.snd{position:fixed;right:16px;bottom:16px;z-index:50;font-family:var(--head);text-transform:uppercase;letter-spacing:.12em;font-weight:700;font-size:16px;background:#000c;color:var(--gold);border:1px solid var(--gold-dim);padding:8px 16px;cursor:pointer}
+.snd:hover{background:var(--gold);color:#120f00}
+#yt-wrap{position:fixed;left:-9999px;top:0;width:220px;height:220px;overflow:hidden}
 @media (max-width:560px){body{font-size:16px}.crawl{font-size:19px}.cmp .knob{width:38px;height:38px}}
 </style>
 </head>
@@ -129,6 +132,8 @@ footer li{margin-bottom:5px}
   </div>
 </div>
 
+<div id="yt-wrap" aria-hidden="true"><div id="yt"></div></div>
+<button class="snd" id="snd" type="button" hidden aria-pressed="false">Muziek aan</button>
 <main id="site" hidden>
 <header class="hero" id="top">
   <p class="kicker">Een schoolproject van HvA studenten, RAI Europahal Hal 1</p>
@@ -187,6 +192,7 @@ footer li{margin-bottom:5px}
       <li>R5-J2 Imperial Astromech Droid, Hunter Wiltse, CC BY 4.0</li>
       <li>C-3PO en R2-D2 modellen via Blendswap, alleen voor niet commercieel gebruik</li>
     </ul>
+    <p>Muziek bij de inleiding: Star Wars Main Theme (Full), kanaal Coltsrock56 op YouTube, afgespeeld via de YouTube speler. De muziek is van John Williams.</p>
     <p>Star Wars is een handelsmerk van Lucasfilm Ltd. Alleen voor onderwijsdoeleinden.</p>
   </div>
 </div></footer>
@@ -233,9 +239,42 @@ footer li{margin-bottom:5px}
   function open(){gate.hidden=true;site.hidden=false;document.body.style.overflow='';window.scrollTo(0,0)}
   var seen=false;try{seen=sessionStorage.getItem('sw_ok')==='1'}catch(e){}
   if(seen){open()}else{document.body.style.overflow='hidden';ok.focus()}
-  ok.addEventListener('click',function(){try{sessionStorage.setItem('sw_ok','1')}catch(e){}open()});
+  var VID='_D0ZQPqeJkk',player=null,fadeT=null,snd=document.getElementById('snd'),musicOn=false,introTimer=null;
+  function setBtn(){snd.textContent=musicOn?'Muziek uit':'Muziek aan';snd.setAttribute('aria-pressed',musicOn?'true':'false')}
+  function fade(to,done){
+    if(!player||!player.getVolume)return;clearInterval(fadeT);
+    fadeT=setInterval(function(){
+      var v=player.getVolume(),n=v<to?Math.min(to,v+3):Math.max(to,v-3);
+      player.setVolume(n);
+      if(n===to){clearInterval(fadeT);if(done)done()}
+    },90);
+  }
+  function startPlayer(){
+    musicOn=true;setBtn();snd.hidden=false;
+    if(player&&player.playVideo){player.setVolume(0);player.playVideo();fade(40);return}
+    function make(){
+      player=new YT.Player('yt',{width:'220',height:'220',videoId:VID,
+        playerVars:{autoplay:1,controls:0,disablekb:1,playsinline:1,rel:0,loop:1,playlist:VID},
+        events:{onReady:function(e){e.target.setVolume(0);e.target.playVideo();fade(40)}}});
+    }
+    if(window.YT&&YT.Player){make()}else{
+      window.onYouTubeIframeAPIReady=make;
+      var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
+    }
+    introTimer=setTimeout(stopMusic,42000);
+  }
+  function stopMusic(){
+    clearTimeout(introTimer);musicOn=false;setBtn();
+    fade(0,function(){try{player.pauseVideo()}catch(e){}});
+  }
+  snd.addEventListener('click',function(){if(musicOn){stopMusic()}else{startPlayer()}});
+  var crawl=document.querySelector('.crawl');
+  if(crawl)crawl.addEventListener('animationend',stopMusic);
+  ok.addEventListener('click',function(){try{sessionStorage.setItem('sw_ok','1')}catch(e){}open();startPlayer()});
+  if(seen){snd.hidden=false;setBtn()}
   document.getElementById('skip').addEventListener('click',function(){
     document.getElementById('top').classList.add('static');
+    if(musicOn)stopMusic();
     document.getElementById('proces').scrollIntoView();
   });
 })();
