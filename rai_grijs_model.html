@@ -1,0 +1,618 @@
+<title>RAI Grijs Model</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#1d2228; --muted:#5d6670; --line:#d5d9dd; --card:#ffffffee; --bg:#dfe3e6;
+    --accent:#1f4fae; --accentInk:#ffffff; --chip:#eef1f4;
+    color-scheme: light;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Saira,system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0}
+  #stage canvas{display:block;touch-action:none}
+  #panel{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:12px;width:290px;max-height:calc(100% - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow:auto;background:var(--card);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:0 6px 24px rgba(20,30,40,.12)}
+  h1{font-size:20px;line-height:1.1;margin:0 0 2px;font-weight:700;letter-spacing:.01em}
+  .sub{color:var(--muted);margin:0 0 12px;font-size:12.5px}
+  .row{display:flex;gap:6px;flex-wrap:wrap}
+  .seg button{flex:1}
+  button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 10px;cursor:pointer}
+  button[aria-pressed="true"]{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+  button:focus-visible,label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+  .sect{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+  .sect h2{font-size:12px;font-weight:600;color:var(--muted);margin:0 0 6px;letter-spacing:.04em}
+  label.tg{display:flex;align-items:center;gap:8px;margin:3px 0;cursor:pointer}
+  .goto{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .goto button{text-align:left;padding:5px 8px;font-size:12.5px}
+  .help{font-size:12.5px;color:var(--muted);margin:0}
+  .help b{color:var(--ink);font-weight:600}
+  .legend{display:none;margin-top:6px;font-size:12.5px}
+  .legend.on{display:grid;grid-template-columns:12px 1fr;gap:4px 8px;align-items:center}
+  .sw{width:12px;height:12px;border-radius:3px}
+  #mini{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(20,30,40,.12);cursor:crosshair;width:240px;height:auto}
+  #where{position:fixed;right:12px;top:calc(12px + env(safe-area-inset-top,0px));background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-weight:600;font-size:13px}
+  #vrslot{margin-top:8px}
+  #vrslot button{position:static!important;width:100%;left:auto!important;bottom:auto!important;background:var(--ink)!important;color:#fff!important;border:0!important;border-radius:7px!important;padding:8px!important;font:600 13px Saira,system-ui,sans-serif!important;opacity:1!important}
+  #toggle{display:none}
+  @media (max-width:640px){
+    #panel{width:auto;right:12px;max-height:46%}
+    #panel.closed .body{display:none}
+    #toggle{display:inline-block;float:right;margin-top:-2px}
+    #mini{width:150px}
+    #where{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+
+<div id="stage"></div>
+<aside id="panel">
+  <button id="toggle" aria-expanded="true">Menu</button>
+  <h1>RAI Amsterdam</h1>
+  <p class="sub">Grijs model, schaal 1:1, voor de Star Wars Xperience</p>
+  <div class="body">
+    <div class="row seg" role="group" aria-label="Weergave">
+      <button id="mOver" aria-pressed="true">Overzicht</button>
+      <button id="mWalk" aria-pressed="false">Rondlopen</button>
+    </div>
+    <div id="vrslot"></div>
+
+    <div class="sect">
+      <h2>Lagen</h2>
+      <label class="tg"><input type="checkbox" id="tRoof"> Daken dicht van bovenaf</label>
+      <label class="tg"><input type="checkbox" id="tStruct" checked> Dakconstructie en lampen</label>
+      <label class="tg"><input type="checkbox" id="tLabels" checked> Namen van hallen</label>
+      <label class="tg"><input type="checkbox" id="tPlan"> Voorstel indeling Xperience</label>
+      <div class="legend" id="legend"></div>
+      <label class="tg"><input type="checkbox" id="tFps"> Beeldsnelheid tonen (FPS)</label>
+    </div>
+
+    <div class="sect">
+      <h2>Ga naar</h2>
+      <div class="goto" id="goto"></div>
+    </div>
+
+    <div class="sect">
+      <h2>Besturing</h2>
+      <p class="help"><b>Overzicht:</b> slepen om te draaien, scrollen om te zoomen, rechts slepen om te schuiven.<br>
+      <b>Rondlopen:</b> slepen om rond te kijken, W A S D of pijltjes om te lopen, Shift om sneller te gaan. Klik op het kaartje om erheen te springen.<br>
+      <b>VR bril:</b> richt de controller op de vloer en druk de trekker in om te teleporteren. Linker stick lopen, rechter stick draaien.</p>
+    </div>
+    <div class="sect">
+      <p class="help">Hallen en gangen zijn overgetrokken van de RAI hallenplattegrond (2025). Oppervlaktes kloppen binnen ongeveer 10 procent met de RAI tabel. De Europahal heeft 39 boogspanten, balkons en een nok van 16,5 meter, volgens RAI en Zuidas. Hoogtes van hal 9, hal 13 en entree K komen uit de RAI rigging handleiding. Overige hoogtes, kolommen, deuren en de indeling van auditorium en Amtrium zijn aannames. Het raster op de vloer is 5 meter, de figuren zijn 1,75 meter.</p>
+    </div>
+  </div>
+</aside>
+<div id="where">Overzicht</div>
+<canvas id="mini" width="480" height="404" aria-label="Kaartje van de RAI, klik om te springen"></canvas>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { VRButton } from 'three/addons/webxr/VRButton.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+/* ---------- Data: meters, x naar oost, z naar zuid. Bron: RAI hallenplattegrond 2025, 0,5 m per pixel ---------- */
+const R = {
+  h8:  {n:'Hal 8',  x:[49,124],    z:[4,182.5],    h:14, t:'hal', m2:12600},
+  h9:  {n:'Hal 9',  x:[12.5,80],   z:[182.5,225],  h:12, t:'hal', m2:2845},
+  h11: {n:'Hal 11', x:[2.5,65],    z:[237.5,305],  h:12, t:'hal', m2:4165},
+  tus: {n:'Tussenhal', x:[65,90],  z:[237.5,305],  h:8,  t:'gang'},
+  h10: {n:'Hal 10', x:[90,144],    z:[225.5,297.5],h:12, t:'hal', m2:3970},
+  h12: {n:'Hal 12', x:[29,122.5],  z:[305,402.5],  h:14, t:'hal', m2:9035},
+  B:   {n:'Gang F', x:[124,144],   z:[15,194],     h:8,  t:'congres'},
+  A:   {n:'Noordgang', x:[144,282.5], z:[99,109],  h:6,  t:'congres'},
+  C:   {n:'Westfoyer', x:[87,174], z:[194,225.5],  h:8,  t:'congres'},
+  D:   {n:'Westgang', x:[144,160], z:[225.5,338.5],h:8,  t:'congres'},
+  E:   {n:'Foyer C', x:[122.5,144],z:[299,336],    h:8,  t:'congres'},
+  F:   {n:'Auditorium', x:[174,272.5], z:[143.5,191.5], h:20, t:'congres'},
+  G:   {n:'Auditoriumfoyer', x:[174,246], z:[191.5,199], h:8, t:'congres'},
+  H:   {n:'Europafoyer', x:[246,280], z:[191.5,319], h:10, t:'congres'},
+  I:   {n:'Zuidgang', x:[231.5,246], z:[300,330],  h:8,  t:'congres'},
+  J:   {n:'Zuidgang west', x:[160,183.5], z:[300,330], h:8, t:'congres'},
+  h13: {n:'Hal 13 Ballroom', x:[183.5,231.5], z:[296.5,343.5], h:12, t:'hal', m2:1985},
+  h3:  {n:'Hal 3',  x:[282.5,322.5], z:[127.5,225], h:14, t:'hal', m2:3920},
+  h2:  {n:'Hal 2',  x:[282.5,322.5], z:[225,325],   h:14, t:'hal', m2:4060},
+  h1:  {n:'Hal 1 Europahal', x:[322.5,405], z:[140,325], h:22, t:'hal', m2:15000},
+  h5a: {n:'Hal 5',  x:[405,480],   z:[140,257.5],  h:16, t:'hal', m2:11395},
+  h5b: {n:'',       x:[405,430],   z:[257.5,325],  h:16, t:'hal'},
+  h4:  {n:'Hal 4 Amtrium', x:[430,480], z:[257.5,330], h:18, t:'hal', m2:540},
+  h7:  {n:'Hal 7',  x:[287.5,482.5], z:[55,110],   h:14, t:'hal', m2:10460},
+  h6:  {n:'Hal 6',  x:[347.5,380], z:[110,140],    h:8,  t:'hal', m2:1025},
+  K:   {n:'Entree K', x:[282.5,430], z:[325,337],  h:8,  t:'congres'},
+};
+const LINKS = [
+  ['h8','B'],['B','A'],['A','h7'],['B','C'],['h8','h9'],['C','h9'],['C','h10'],['C','G'],['C','D'],
+  ['G','F'],['G','H'],['F','H'],['h10','D'],['D','E'],['E','h12'],['h10','h12'],['h11','tus'],['tus','h10'],
+  ['tus','h12'],['h11','h12'],['D','J'],['J','h13'],['h13','I'],['I','H'],['H','h3'],['H','h2'],['h3','h2'],
+  ['h3','h1'],['h2','h1'],['h7','h6'],['h6','h1'],['h1','h5a'],['h5a','h5b','merge'],['h5a','h4'],['h5b','h4'],
+  ['K','h2'],['K','h1'],['K','h5b']
+];
+const ENTS = [
+  {k:'K',r:'K',s:'S',at:306.5},{k:'L',r:'K',s:'S',at:414},{k:'M',r:'h5a',s:'E',at:245},{k:'R',r:'h7',s:'E',at:82.5},
+  {k:'F',r:'B',s:'E',at:150},{k:'G',r:'G',s:'S',at:205},{k:'H',r:'H',s:'W',at:222},{k:'E',r:'D',s:'E',at:240},
+  {k:'C',r:'E',s:'S',at:133},{k:'D',r:'h13',s:'S',at:207.5}
+];
+/* Voorstel: route volgens het concept van de 10 pager */
+const PLAN = {
+  h13:{c:'#7b5cd6', l:'Opening: De Force'},
+  H:  {c:'#c99a2e', l:'Keuzezaal'},
+  h3: {c:'#3b7fd6', l:'Jedi pad'},
+  h2: {c:'#d13b3b', l:'Sith pad'},
+  h1: {c:'#d9b26a', l:'Plein van Tatooine'},
+  h5a:{c:'#e07b39', l:'Podrace (Coen)'}, h5b:{c:'#e07b39', l:''},
+  h7: {c:'#2fa38a', l:'Lasergame (Stan)'}, h6:{c:'#2fa38a', l:''},
+  h4: {c:'#5c8a3a', l:'Dagobah (Elvin)'},
+};
+const GOTO = [
+  ['Entree K','K',[306.5,331],0], ['Hal 13','h13',null,0], ['Europafoyer','H',null,Math.PI/2],
+  ['Hal 3','h3',null,-Math.PI/2], ['Hal 2','h2',null,-Math.PI/2], ['Hal 1','h1',null,-Math.PI/2],
+  ['Hal 5','h5a',null,-Math.PI/2], ['Hal 4','h4',null,0], ['Hal 7','h7',null,0], ['Hal 8','h8',null,0],
+  ['Hal 12','h12',null,0], ['Auditorium','F',null,0]
+];
+
+const COL = { ground:0xb7bcb6, hal:0xe8eae6, gang:0xdcdedb, congres:0xc4cfe2, wall:0xf3f3f0, roof:0xffffff, sky:0xdfe3e6 };
+const T = 0.6, TOL = 8.5;
+
+const HGT={h8:12,h9:6,h11:11,tus:7,h10:11,h12:12,B:8,A:5,C:6,D:7,E:9.5,F:14,G:7,H:10,I:7,J:7,h13:9.5,h3:9,h2:9,h1:10,h5a:12,h5b:12,h4:18,h7:12,h6:8,K:7.5};
+for (const k in HGT) R[k].h=HGT[k];
+const FRAME3D=['h6','h7','h8','h10','h11','h12'], GIRDER=['h2','h3','h5a','h5b'];
+const GLASS={K:['S'],h13:['S'],h4:['S','E'],H:['W'],E:['S'],B:['E'],A:['N'],C:['N']};
+const APEX=16.5; /* nokhoogte Europahal */
+/* ---------- openingen berekenen ---------- */
+for (const k in R){ R[k].open = {N:[],S:[],W:[],E:[]}; R[k].key = k; }
+const connectors = [];
+function overlap(a0,a1,b0,b1){ return [Math.max(a0,b0), Math.min(a1,b1)]; }
+for (const [a,b,mode] of LINKS){
+  const A=R[a], B=R[b]; const c=[];
+  const ox = overlap(A.x[0],A.x[1],B.x[0],B.x[1]), oz = overlap(A.z[0],A.z[1],B.z[0],B.z[1]);
+  if (oz[1]-oz[0] > 2){
+    const g1 = B.x[0]-A.x[1]; if (g1>=-0.5 && g1<TOL) c.push({g:g1, sa:'E', sb:'W', o:oz, axis:'z', p0:A.x[1], p1:B.x[0]});
+    const g2 = A.x[0]-B.x[1]; if (g2>=-0.5 && g2<TOL) c.push({g:g2, sa:'W', sb:'E', o:oz, axis:'z', p0:B.x[1], p1:A.x[0]});
+  }
+  if (ox[1]-ox[0] > 2){
+    const g3 = B.z[0]-A.z[1]; if (g3>=-0.5 && g3<TOL) c.push({g:g3, sa:'S', sb:'N', o:ox, axis:'x', p0:A.z[1], p1:B.z[0]});
+    const g4 = A.z[0]-B.z[1]; if (g4>=-0.5 && g4<TOL) c.push({g:g4, sa:'N', sb:'S', o:ox, axis:'x', p0:B.z[1], p1:A.z[0]});
+  }
+  if (!c.length){ console.warn('geen aansluiting', a, b); continue; }
+  c.sort((p,q)=>p.g-q.g); const j=c[0];
+  const len = j.o[1]-j.o[0];
+  const w = mode==='merge' ? len : Math.min(12, len*0.7);
+  const mid = (j.o[0]+j.o[1])/2;
+  let dh = mode==='merge' ? Math.min(A.h,B.h) : Math.min(6, A.h-1, B.h-1);
+  if (mode!=='merge' && (a==='h1'||b==='h1') && j.axis==='z') dh=5;
+  A.open[j.sa].push({c:mid,w,h:dh,to:B.n||'Hal 5',merge:mode==='merge'}); B.open[j.sb].push({c:mid,w,h:dh,to:A.n||'Hal 5',merge:mode==='merge'});
+  if (j.g > 0.3) connectors.push({axis:j.axis, mid, w, p0:j.p0, p1:j.p1, h:dh});
+}
+for (const e of ENTS){ R[e.r].open[e.s].push({c:e.at, w:10, h:Math.min(6,R[e.r].h-1), ent:e.k, to:'Uitgang '+e.k}); }
+
+/* ---------- three ---------- */
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.setSize(innerWidth, innerHeight);
+renderer.xr.enabled = true;
+renderer.xr.setFramebufferScaleFactor(0.8);
+renderer.xr.setFoveation(1);
+renderer.shadowMap.enabled = false;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(COL.sky);
+scene.fog = new THREE.Fog(COL.sky, 350, 1500);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f88, 1.15));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(-200,400,-150); scene.add(sun);
+
+const rig = new THREE.Group(); scene.add(rig);
+const camera = new THREE.PerspectiveCamera(65, innerWidth/innerHeight, 0.1, 2000);
+rig.add(camera);
+
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(5000,5000), new THREE.MeshLambertMaterial({color:COL.ground}));
+ground.rotation.x = -Math.PI/2; ground.position.set(240,-0.5,200); scene.add(ground);
+
+const wallGeos = [], floors = [], roofGroup = new THREE.Group(), labelGroup = new THREE.Group(), planGroup = new THREE.Group();
+scene.add(roofGroup, labelGroup, planGroup);
+planGroup.visible = false;
+
+function boxGeo(w,h,d,x,y,z){ const g=new THREE.BoxGeometry(w,h,d); g.translate(x,y,z); return g; }
+
+const glassGeos=[], frameGeos=[], signs=[], roofGeos=[], structGeos=[], skyGeos=[], lineVerts=[], colPos=[];
+function sideWalls(r, side){
+  const H=r.h, ops=[...r.open[side]].sort((a,b)=>a.c-b.c);
+  const isGlass=(GLASS[r.key]||[]).includes(side);
+  const tgt=isGlass?glassGeos:wallGeos;
+  let a0,a1,fixed,along;
+  if (side==='N'||side==='S'){ a0=r.x[0]; a1=r.x[1]; fixed= side==='N'? r.z[0]: r.z[1]; along='x'; }
+  else { a0=r.z[0]; a1=r.z[1]; fixed= side==='W'? r.x[0]: r.x[1]; along='z'; }
+  const box=(arr,s0,s1,y0,y1,th)=>{
+    const L=s1-s0; if (L<0.05 || y1-y0<0.05) return;
+    const m=(s0+s1)/2, hy=y1-y0, cy=(y0+y1)/2;
+    arr.push(along==='x' ? boxGeo(L,hy,th,m,cy,fixed) : boxGeo(th,hy,L,fixed,cy,m));
+  };
+  let cur=a0;
+  for (const o of ops){
+    const s=Math.max(a0,o.c-o.w/2), e=Math.min(a1,o.c+o.w/2);
+    box(tgt,cur,s,0,H,T); box(tgt,s,e,o.h,H,T); cur=e;
+    if (!o.merge){
+      box(frameGeos,s-0.2,s+0.2,0,o.h,T+0.5); box(frameGeos,e-0.2,e+0.2,0,o.h,T+0.5); box(frameGeos,s-0.2,e+0.2,o.h,o.h+0.35,T+0.5);
+      signs.push({r,side,c:o.c,h:o.h+0.35,w:e-s,to:o.to,ent:o.ent});
+    }
+  }
+  box(tgt,cur,a1,0,H,T);
+  if (isGlass){
+    for (let s=a0+2.5; s<a1; s+=5){ const o=ops.find(o=>s>o.c-o.w/2+0.3 && s<o.c+o.w/2-0.3); box(frameGeos,s-0.12,s+0.12,o?o.h:0,H,T+0.2); }
+    box(frameGeos,a0,a1,H-0.3,H,T+0.2);
+    for (let y=3.6; y<H-1.5; y+=3.6){ let c2=a0; for (const o of ops){ const s=o.c-o.w/2, e=o.c+o.w/2; if (y<o.h+0.3){ box(frameGeos,c2,s,y-0.08,y+0.08,T+0.2); c2=e; } } box(frameGeos,c2,a1,y-0.08,y+0.08,T+0.2); }
+  }
+}
+
+/* vloer met raster van 5 meter, voor gevoel van schaal */
+const gcv=document.createElement('canvas'); gcv.width=gcv.height=128;
+{ const g=gcv.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,128,128); g.strokeStyle='rgba(60,70,80,0.30)'; g.lineWidth=2; g.strokeRect(0,0,128,128); }
+const gridTex=new THREE.CanvasTexture(gcv); gridTex.wrapS=gridTex.wrapT=THREE.RepeatWrapping; gridTex.colorSpace=THREE.SRGBColorSpace; gridTex.anisotropy=8;
+const floorMat = {
+  hal:new THREE.MeshLambertMaterial({color:COL.hal,map:gridTex}),
+  gang:new THREE.MeshLambertMaterial({color:COL.gang,map:gridTex}),
+  congres:new THREE.MeshLambertMaterial({color:COL.congres,map:gridTex})
+};
+function floorMesh(w,d,cx,cz,mat){
+  const g=new THREE.PlaneGeometry(w,d); const uv=g.attributes.uv;
+  for (let i=0;i<uv.count;i++) uv.setXY(i, uv.getX(i)*w/5, uv.getY(i)*d/5);
+  g.rotateX(-Math.PI/2); const m=new THREE.Mesh(g,mat); m.position.set(cx,0.1,cz); floors.push(m); scene.add(m); return m;
+}
+function flatRoof(x0,x1,z0,z1,h){ const g=new THREE.PlaneGeometry(x1-x0,z1-z0); g.rotateX(Math.PI/2); g.translate((x0+x1)/2,h,(z0+z1)/2); roofGeos.push(g); }
+function skyPanel(x0,x1,z0,z1,h){ const g=new THREE.PlaneGeometry(x1-x0,z1-z0); g.rotateX(Math.PI/2); g.translate((x0+x1)/2,h-0.06,(z0+z1)/2); skyGeos.push(g); }
+const L=(a,b,c,d,e,f)=>lineVerts.push(a,b,c,d,e,f);
+const merge=arr=>mergeGeometries(arr.map(g=>g.index?g.toNonIndexed():g));
+
+for (const k in R){ const r=R[k]; r.cx=(r.x[0]+r.x[1])/2; r.cz=(r.z[0]+r.z[1])/2; r.w=r.x[1]-r.x[0]; r.d=r.z[1]-r.z[0]; }
+const h1=R.h1, arcY=x=>{ const t=(x-h1.cx)/(h1.w/2); return h1.h+(APEX-h1.h)*(1-t*t); };
+
+for (const k in R){
+  const r=R[k];
+  floorMesh(r.w,r.d,r.cx,r.cz,floorMat[r.t]).userData.key=k;
+  for (const s of ['N','S','W','E']) sideWalls(r,s);
+  if (k!=='h1') flatRoof(r.x[0],r.x[1],r.z[0],r.z[1],r.h);
+}
+for (const c of connectors){
+  const Ln=c.p1-c.p0, m=(c.p0+c.p1)/2;
+  if (c.axis==='z'){ floorMesh(Ln+1,c.w,m,c.mid,floorMat.gang);
+    wallGeos.push(boxGeo(Ln,c.h,T,m,c.h/2,c.mid-c.w/2), boxGeo(Ln,c.h,T,m,c.h/2,c.mid+c.w/2), boxGeo(Ln,0.3,c.w,m,c.h,c.mid)); }
+  else { floorMesh(c.w,Ln+1,c.mid,m,floorMat.gang);
+    wallGeos.push(boxGeo(T,c.h,Ln,c.mid-c.w/2,c.h/2,m), boxGeo(T,c.h,Ln,c.mid+c.w/2,c.h/2,m), boxGeo(c.w,0.3,Ln,c.mid,c.h,m)); }
+}
+
+/* ---- Hal 1, Europahal: 39 boogspanten, gebogen dak, balkons aan beide lange zijden, glazen kopgevel ---- */
+{
+  const SEG=18, xs=[...Array(SEG+1)].map((_,i)=>h1.x[0]+h1.w*i/SEG);
+  const g=new THREE.PlaneGeometry(h1.w,h1.d,SEG,1); g.rotateX(Math.PI/2); g.translate(h1.cx,0,h1.cz);
+  const p=g.attributes.position; for (let i=0;i<p.count;i++) p.setY(i, arcY(p.getX(i))); g.computeVertexNormals(); roofGeos.push(g);
+  for (let a=0;a<39;a++){
+    const z=h1.z[0]+0.5+(h1.d-1)*a/38;
+    for (let j=0;j<SEG;j++){
+      const xa=xs[j], xb=xs[j+1], ya=arcY(xa), yb=arcY(xb), len=Math.hypot(xb-xa,yb-ya);
+      const b=new THREE.BoxGeometry(len+0.05,0.9,0.45); b.rotateZ(Math.atan2(yb-ya,xb-xa)); b.translate((xa+xb)/2,(ya+yb)/2-0.5,z); structGeos.push(b);
+    }
+  }
+  for (let j=1;j<=10;j++){ const x=h1.x[0]+h1.w*j/11; structGeos.push(boxGeo(0.3,0.3,h1.d,x,arcY(x)-0.2,h1.cz)); }
+  const gable=()=>{ const s=new THREE.Shape(); s.moveTo(h1.x[0],h1.h); for (const x of xs) s.lineTo(x,arcY(x)); s.lineTo(h1.x[1],h1.h); s.closePath(); return new THREE.ExtrudeGeometry(s,{depth:T,bevelEnabled:false}); };
+  const gn=gable(); gn.translate(0,0,h1.z[0]-T/2); wallGeos.push(gn);
+  const gs=gable(); gs.translate(0,0,h1.z[1]-T/2); glassGeos.push(gs);
+  for (let x=h1.x[0]+4.125; x<h1.x[1]; x+=5.5){ const hy=arcY(x)-h1.h; frameGeos.push(boxGeo(0.25,hy,T+0.2,x,h1.h+hy/2,h1.z[1])); }
+  frameGeos.push(boxGeo(h1.w,0.3,T+0.2,h1.cx,h1.h,h1.z[1]));
+  for (const sgn of [1,-1]){
+    const edge = sgn>0 ? h1.x[0] : h1.x[1];
+    wallGeos.push(boxGeo(9,0.4,h1.d-1,edge+sgn*4.5,6.4,h1.cz), boxGeo(0.15,1.1,h1.d-1,edge+sgn*9,7.15,h1.cz));
+    for (let z=h1.z[0]+5; z<h1.z[1]; z+=9.7) wallGeos.push(boxGeo(0.5,6.2,0.5,edge+sgn*8.6,3.1,z));
+  }
+}
+
+/* ---- Hallen met driedimensionaal vakwerk (6, 7, 8, 10, 11, 12) ---- */
+for (const k of FRAME3D){
+  const r=R[k], nx=Math.max(2,Math.round(r.w/7.5)), nz=Math.max(2,Math.round(r.d/7.5)), sx=r.w/nx, sz=r.d/nz, yb=r.h-2.1, yt=r.h-0.35;
+  for (let j=0;j<=nz;j++) L(r.x[0],yb,r.z[0]+j*sz, r.x[1],yb,r.z[0]+j*sz);
+  for (let i=0;i<=nx;i++) L(r.x[0]+i*sx,yb,r.z[0], r.x[0]+i*sx,yb,r.z[1]);
+  for (let j=0;j<nz;j++){ const z=r.z[0]+(j+0.5)*sz; L(r.x[0]+sx/2,yt,z, r.x[1]-sx/2,yt,z); }
+  for (let i=0;i<nx;i++){ const x=r.x[0]+(i+0.5)*sx; L(x,yt,r.z[0]+sz/2, x,yt,r.z[1]-sz/2); }
+  for (let i=0;i<nx;i++) for (let j=0;j<nz;j++){
+    const cx=r.x[0]+(i+0.5)*sx, cz=r.z[0]+(j+0.5)*sz;
+    for (const [dx,dz] of [[0,0],[1,0],[0,1],[1,1]]) L(cx,yt,cz, r.x[0]+(i+dx)*sx,yb,r.z[0]+(j+dz)*sz);
+  }
+  const cxn=Math.floor(r.w/30), czn=Math.floor(r.d/30);
+  for (let i=1;i<=cxn;i++) for (let j=1;j<=czn;j++){ const x=r.x[0]+r.w*i/(cxn+1), z=r.z[0]+r.d*j/(czn+1); if (cxn&&czn) colPos.push([x,z,yb]); }
+  const lng = r.d>=r.w;
+  if (r.h>8){ if (lng) for (let x=r.x[0]+15; x<r.x[1]-8; x+=22.5) skyPanel(x-1.5,x+1.5,r.z[0]+4,r.z[1]-4,r.h);
+              else for (let z=r.z[0]+15; z<r.z[1]-8; z+=22.5) skyPanel(r.x[0]+4,r.x[1]-4,z-1.5,z+1.5,r.h); }
+}
+/* ---- Hallen met liggers en hoofdspanten (2, 3, 5) ---- */
+for (const k of GIRDER){
+  const r=R[k], yb=r.h-1.9, yt=r.h-0.25;
+  for (let z=r.z[0]+5; z<r.z[1]-1; z+=10){
+    structGeos.push(boxGeo(r.w,0.35,0.35,r.cx,yb,z)); L(r.x[0],yt,z,r.x[1],yt,z);
+    const n=Math.round(r.w/2.5), st=r.w/n;
+    for (let i=0;i<n;i++){ const xa=r.x[0]+i*st, xb=xa+st; if (i%2) L(xa,yt,z,xb,yb,z); else L(xa,yb,z,xb,yt,z); }
+  }
+  for (const f of [0.25,0.5,0.75]){ const x=r.x[0]+r.w*f; L(x,yt,r.z[0],x,yt,r.z[1]); }
+  if (r.w>50) for (let z=r.z[0]+25; z<r.z[1]-10; z+=30) colPos.push([r.cx,z,yb]);
+  for (let z=r.z[0]+10; z<r.z[1]-6; z+=20) skyPanel(r.x[0]+4,r.x[1]-4,z-1,z+1,r.h);
+}
+/* ---- Lage ruimtes: plafondverlichting ---- */
+for (const k in R){
+  const r=R[k]; if (FRAME3D.includes(k)||GIRDER.includes(k)||k==='h1') continue;
+  const st = r.t==='hal' ? 9 : 8, nx=Math.max(1,Math.floor(r.w/st)), nz=Math.max(1,Math.floor(r.d/st));
+  for (let i=0;i<nx;i++) for (let j=0;j<nz;j++){ const x=r.x[0]+r.w*(i+0.5)/nx, z=r.z[0]+r.d*(j+0.5)/nz; skyPanel(x-0.9,x+0.9,z-0.9,z+0.9,r.h); }
+}
+/* ---- Auditorium: podium en oplopende tribune ---- */
+{
+  const r=R.F, zc=r.z[0]+20.5;
+  wallGeos.push(boxGeo(14,1.2,30,r.x[0]+9,0.6,zc));
+  for (let i=0;i<13;i++){ const hgt=0.5+i*0.5; wallGeos.push(boxGeo(5.4,hgt,39,r.x[0]+26+i*5.4,hgt/2,zc)); }
+  for (const zz of [r.z[0]+8,r.z[0]+33]) structGeos.push(boxGeo(20,0.6,0.6,r.x[0]+10,r.h-2,zz));
+}
+/* ---- Amtrium (hal 4): galerijen op twee verdiepingen ---- */
+{
+  const r=R.h4;
+  for (const y of [6,12]){
+    wallGeos.push(boxGeo(r.w-1,0.4,14,r.cx,y,r.z[0]+7.3), boxGeo(r.w-1,1.1,0.15,r.cx,y+0.75,r.z[0]+14.3));
+    wallGeos.push(boxGeo(10,0.4,r.d-15,r.x[0]+5.3,y,r.cz+7), boxGeo(0.15,1.1,r.d-15,r.x[0]+10.3,y+0.75,r.cz+7));
+  }
+  for (let x=r.x[0]+10; x<r.x[1]; x+=10) wallGeos.push(boxGeo(0.5,12,0.5,x,6,r.z[0]+14));
+  for (let z=r.z[0]+24; z<r.z[1]; z+=10) wallGeos.push(boxGeo(0.5,12,0.5,r.x[0]+10,6,z));
+}
+
+const walls = new THREE.Mesh(merge(wallGeos), new THREE.MeshLambertMaterial({color:COL.wall}));
+scene.add(walls);
+const glassMat=new THREE.MeshLambertMaterial({color:0x9cc3d6, transparent:true, opacity:0.32, side:THREE.DoubleSide, depthWrite:false});
+scene.add(new THREE.Mesh(merge(glassGeos), glassMat));
+const darkMat=new THREE.MeshLambertMaterial({color:0x59636b});
+scene.add(new THREE.Mesh(merge(frameGeos), darkMat));
+const roofMat=new THREE.MeshBasicMaterial({color:0xc3c8c8, side:THREE.FrontSide});
+roofGroup.add(new THREE.Mesh(merge(roofGeos), roofMat));
+const structGroup=new THREE.Group(); scene.add(structGroup);
+structGroup.add(new THREE.Mesh(merge(structGeos), darkMat));
+structGroup.add(new THREE.Mesh(merge(skyGeos), new THREE.MeshBasicMaterial({color:0xf6fafb})));
+{ const lg=new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(lineVerts,3));
+  structGroup.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({color:0x6a747c}))); }
+{ const cg=new THREE.CylinderGeometry(0.4,0.4,1,10); cg.translate(0,0.5,0);
+  const cm=new THREE.InstancedMesh(cg, new THREE.MeshLambertMaterial({color:0xdadcd8}), colPos.length); const o=new THREE.Object3D();
+  colPos.forEach(([x,z,h],i)=>{ o.position.set(x,0,z); o.scale.set(1,h,1); o.updateMatrix(); cm.setMatrixAt(i,o.matrix); }); scene.add(cm); }
+
+/* ---- Mensen van 1,75 meter, voor de schaal ---- */
+{
+  let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const pts=[];
+  for (const k in R){ const r=R[k]; if (k==='F'||r.w<9||r.d<9) continue;
+    const n=Math.max(2,Math.min(9,Math.round(r.w*r.d/1400)));
+    for (let i=0;i<n;i++){ const x=r.x[0]+3+rnd()*(r.w-6), z=r.z[0]+3+rnd()*(r.d-6); pts.push([x,z]); if (rnd()>0.5) pts.push([x+0.7,z+0.3]); } }
+  const pg=new THREE.CapsuleGeometry(0.22,1.3,3,8); pg.translate(0,0.97,0);
+  const pm=new THREE.InstancedMesh(pg,new THREE.MeshLambertMaterial({color:0x4d5a66}),pts.length); const o=new THREE.Object3D();
+  pts.forEach(([x,z],i)=>{ o.position.set(x,0.1,z); o.updateMatrix(); pm.setMatrixAt(i,o.matrix); }); scene.add(pm);
+}
+/* ---- Haven aan de noordkant ---- */
+{ const w=new THREE.Mesh(new THREE.PlaneGeometry(128,125), new THREE.MeshLambertMaterial({color:0x9db8c6})); w.rotation.x=-Math.PI/2; w.position.set(214,0,30); scene.add(w); }
+
+/* ---- Bordjes boven de doorgangen ---- */
+const signMats={};
+function signMat(txt){
+  if (signMats[txt]) return signMats[txt];
+  const c=document.createElement('canvas'); c.width=512; c.height=96; const g=c.getContext('2d');
+  g.fillStyle='#1d2228'; g.fillRect(0,0,512,96); g.fillStyle='#ffffff'; g.textAlign='center'; g.textBaseline='middle';
+  let fs=56; g.font='600 '+fs+'px Saira, system-ui, sans-serif'; while (g.measureText(txt).width>480 && fs>24){ fs-=4; g.font='600 '+fs+'px Saira, system-ui, sans-serif'; }
+  g.fillText(txt,256,50);
+  const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=4;
+  return signMats[txt]=new THREE.MeshBasicMaterial({map:t});
+}
+function buildSigns(){
+  const off=T/2+0.32;
+  for (const s of signs){
+    if (!s.to) continue; const r=s.r;
+    const ceil=(r.key==='h1'&&(s.side==='W'||s.side==='E')) ? 6.2 : r.h;
+    const sh=Math.min(1.3, ceil-s.h-0.15); if (sh<0.45) continue;
+    const sw=Math.min(sh*5.33, s.w), y=s.h+0.06+sw/5.33/2;
+    const place=(txt,out)=>{
+      const m=new THREE.Mesh(new THREE.PlaneGeometry(sw,sw/5.33), signMat(txt)); const d=out?-off:off;
+      if (s.side==='N'){ m.position.set(s.c,y,r.z[0]+d); m.rotation.y= out?Math.PI:0; }
+      if (s.side==='S'){ m.position.set(s.c,y,r.z[1]-d); m.rotation.y= out?0:Math.PI; }
+      if (s.side==='W'){ m.position.set(r.x[0]+d,y,s.c); m.rotation.y= out?-Math.PI/2:Math.PI/2; }
+      if (s.side==='E'){ m.position.set(r.x[1]-d,y,s.c); m.rotation.y= out?Math.PI/2:-Math.PI/2; }
+      scene.add(m);
+    };
+    place(s.to,false); if (s.ent) place('Ingang '+s.ent,true);
+  }
+}
+document.fonts.ready.then(buildSigns);
+
+
+/* ---------- labels ---------- */
+function textSprite(txt, sub, color='#1d2228', bg='rgba(255,255,255,0.88)'){
+  const c=document.createElement('canvas'); c.width=512; c.height=sub?160:110; const g=c.getContext('2d');
+  g.fillStyle=bg; g.beginPath(); g.roundRect(4,4,504,c.height-8,18); g.fill();
+  g.fillStyle=color; g.textAlign='center'; g.textBaseline='middle';
+  g.font='700 54px Saira, system-ui, sans-serif'; g.fillText(txt,256, sub?62:57);
+  if (sub){ g.font='500 34px Saira, system-ui, sans-serif'; g.fillStyle='#5d6670'; g.fillText(sub,256,118); }
+  const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=4;
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t, transparent:true}));
+  s.renderOrder=10; s.userData.aspect=c.width/c.height; return s;
+}
+function addLabels(){
+  for (const k in R){
+    const r=R[k]; if (!r.n) continue;
+    const big = r.t==='hal';
+    const s=textSprite(r.n, r.m2 ? r.m2.toLocaleString('nl-NL')+' m²' : null);
+    const W = big ? 34 : 20; s.scale.set(W, W/s.userData.aspect, 1);
+    s.position.set(r.cx, (k==='h1'?APEX:r.h)+8, r.cz); labelGroup.add(s);
+  }
+  for (const e of ENTS){
+    const r=R[e.r]; const p=edgePoint(r,e.s,e.at,4);
+    const s=textSprite('Ingang '+e.k, null, '#ffffff', 'rgba(31,79,174,0.92)'); s.scale.set(11,11/s.userData.aspect,1);
+    s.position.set(p[0], 9, p[1]); labelGroup.add(s);
+  }
+}
+function edgePoint(r,s,at,out=0){
+  if (s==='N') return [at, r.z[0]-out]; if (s==='S') return [at, r.z[1]+out];
+  if (s==='W') return [r.x[0]-out, at]; return [r.x[1]+out, at];
+}
+document.fonts.ready.then(addLabels);
+
+/* ---------- voorstel indeling ---------- */
+const legendEl=document.getElementById('legend');
+for (const k in PLAN){
+  const r=R[k], p=PLAN[k], w=r.x[1]-r.x[0], d=r.z[1]-r.z[0];
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w-1.5,d-1.5), new THREE.MeshBasicMaterial({color:p.c, transparent:true, opacity:0.55, depthWrite:false, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2}));
+  m.rotation.x=-Math.PI/2; m.position.set(r.cx,0.3,r.cz); planGroup.add(m);
+  if (p.l){
+    const s=textSprite(p.l,null,'#ffffff',p.c); s.scale.set(30,30/s.userData.aspect,1); s.position.set(r.cx, r.h+16, r.cz); planGroup.add(s);
+    legendEl.insertAdjacentHTML('beforeend', `<span class="sw" style="background:${p.c}"></span><span>${p.l}</span>`);
+  }
+}
+
+/* ---------- besturing ---------- */
+const orbit = new OrbitControls(camera, renderer.domElement);
+orbit.target.set(205,0,215); orbit.maxPolarAngle = Math.PI*0.49; orbit.minDistance=20; orbit.maxDistance=900;
+camera.position.set(215,290,470); orbit.update();
+
+let mode='over', yaw=0, pitch=0;
+const keys={};
+const where=document.getElementById('where');
+function setMode(m){
+  mode=m;
+  document.getElementById('mOver').setAttribute('aria-pressed', m==='over');
+  document.getElementById('mWalk').setAttribute('aria-pressed', m==='walk');
+  orbit.enabled = m==='over';
+  if (m==='over'){ rig.position.set(0,0,0); rig.rotation.set(0,0,0); camera.position.set(215,290,470); camera.rotation.set(0,0,0); orbit.target.set(205,0,215); orbit.update(); where.textContent='Overzicht'; }
+  else { camera.position.set(0,1.7,0); applyLook(); }
+}
+function applyLook(){ rig.rotation.set(0,yaw,0); camera.rotation.set(pitch,0,0,'YXZ'); }
+function goTo(x,z,y){ if (mode!=='walk') setMode('walk'); rig.position.set(x,0,z); if (y!==undefined) yaw=y; pitch=0; applyLook(); }
+
+document.getElementById('mOver').onclick=()=>setMode('over');
+document.getElementById('mWalk').onclick=()=>{ const r=R.K; goTo(306.5,331,0); };
+const gotoEl=document.getElementById('goto');
+for (const [n,k,pt,y] of GOTO){
+  const b=document.createElement('button'); b.textContent=n;
+  b.onclick=()=>{ const r=R[k]; const p= pt || [r.cx, r.cz]; goTo(p[0],p[1],y); };
+  gotoEl.appendChild(b);
+}
+const tRoof=document.getElementById('tRoof'), tLabels=document.getElementById('tLabels'), tPlan=document.getElementById('tPlan');
+tRoof.onchange=()=>{ roofMat.side = tRoof.checked ? THREE.DoubleSide : THREE.FrontSide; roofMat.needsUpdate=true; };
+const tStruct=document.getElementById('tStruct'); tStruct.onchange=()=>structGroup.visible=tStruct.checked;
+tLabels.onchange=()=>labelGroup.visible=tLabels.checked;
+tPlan.onchange=()=>{ planGroup.visible=tPlan.checked; legendEl.classList.toggle('on',tPlan.checked); };
+const panel=document.getElementById('panel'), tog=document.getElementById('toggle');
+if (innerWidth<=640){ panel.classList.add('closed'); tog.setAttribute('aria-expanded','false'); }
+tog.onclick=()=>{ const c=panel.classList.toggle('closed'); tog.setAttribute('aria-expanded', !c); };
+
+let drag=null;
+renderer.domElement.addEventListener('pointerdown',e=>{ if(mode==='walk'){ drag={x:e.clientX,y:e.clientY}; renderer.domElement.setPointerCapture(e.pointerId);} });
+renderer.domElement.addEventListener('pointermove',e=>{ if(mode==='walk'&&drag){ yaw-=(e.clientX-drag.x)*0.004; pitch=Math.max(-1.3,Math.min(1.3,pitch-(e.clientY-drag.y)*0.004)); drag={x:e.clientX,y:e.clientY}; applyLook(); } });
+addEventListener('pointerup',()=>drag=null);
+addEventListener('keydown',e=>{ keys[e.code]=true; if(mode==='walk' && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault(); });
+addEventListener('keyup',e=>keys[e.code]=false);
+
+/* ---------- VR ---------- */
+const vrBtn = VRButton.createButton(renderer);
+document.getElementById('vrslot').appendChild(vrBtn);
+renderer.xr.addEventListener('sessionstart',()=>{ if(mode==='over'){ mode='walk'; orbit.enabled=false; rig.position.set(306.5,0,331); } camera.position.set(0,0,0); camera.rotation.set(0,0,0); });
+renderer.xr.addEventListener('sessionend',()=>{ camera.position.set(0,1.7,0); applyLook(); });
+
+const reticle=new THREE.Mesh(new THREE.RingGeometry(0.35,0.5,32).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({color:0x1f4fae}));
+reticle.visible=false; scene.add(reticle);
+const ray=new THREE.Raycaster(), tmpM=new THREE.Matrix4();
+const ctrls=[0,1].map(i=>{
+  const c=renderer.xr.getController(i);
+  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,-1)]), new THREE.LineBasicMaterial({color:0x1f4fae}));
+  line.scale.z=30; c.add(line); rig.add(c);
+  c.addEventListener('selectend',()=>{ const hit=castFrom(c); if(hit) rig.position.set(hit.x,0,hit.z); });
+  return c;
+});
+function castFrom(c){
+  tmpM.identity().extractRotation(c.matrixWorld);
+  ray.ray.origin.setFromMatrixPosition(c.matrixWorld); ray.ray.direction.set(0,0,-1).applyMatrix4(tmpM);
+  const h=ray.intersectObjects(floors,false)[0]; return h ? h.point : null;
+}
+let snapCool=0;
+function xrSticks(dt){
+  const s=renderer.xr.getSession(); if(!s) return;
+  const head=new THREE.Vector3(); camera.getWorldDirection(head); head.y=0; head.normalize();
+  const right=new THREE.Vector3(-head.z,0,head.x);
+  for (const src of s.inputSources){
+    const gp=src.gamepad; if(!gp||gp.axes.length<4) continue;
+    const ax=gp.axes[2], ay=gp.axes[3];
+    if (src.handedness==='left'){ if(Math.abs(ax)>0.15||Math.abs(ay)>0.15){ rig.position.addScaledVector(head,-ay*4*dt).addScaledVector(right,ax*4*dt); } }
+    else if (src.handedness==='right'){ snapCool-=dt; if(Math.abs(ax)>0.7&&snapCool<=0){ rig.rotation.y-=Math.sign(ax)*Math.PI/6; snapCool=0.35; } }
+  }
+}
+
+/* ---------- kaartje ---------- */
+const mini=document.getElementById('mini'), mg=mini.getContext('2d');
+const MS = mini.width/490, MOX=0, MOZ=0;
+function drawMini(){
+  mg.clearRect(0,0,mini.width,mini.height);
+  mg.fillStyle='#f6f7f5'; mg.fillRect(0,0,mini.width,mini.height);
+  for (const k in R){ const r=R[k]; const p=planGroup.visible&&PLAN[k];
+    mg.fillStyle = p ? p.c : (r.t==='congres' ? '#9fb2d4' : r.t==='gang' ? '#cfd2ce' : '#b9c4c2');
+    mg.fillRect(r.x[0]*MS, r.z[0]*MS, (r.x[1]-r.x[0])*MS, (r.z[1]-r.z[0])*MS);
+  }
+  mg.fillStyle='#1d2228'; mg.font='600 15px Saira, system-ui, sans-serif'; mg.textAlign='center'; mg.textBaseline='middle';
+  for (const k in R){ const r=R[k]; if(r.t==='hal'&&r.n){ mg.fillText(r.n.split(' ')[1], r.cx*MS, r.cz*MS); } }
+  mg.fillStyle='#1f4fae'; mg.font='700 12px Saira, system-ui, sans-serif';
+  for (const e of ENTS){ const p=edgePoint(R[e.r],e.s,e.at,7); mg.fillText(e.k, p[0]*MS, p[1]*MS); }
+  if (mode==='walk'){
+    const x=rig.position.x*MS, z=rig.position.z*MS;
+    const dir = new THREE.Vector3(); camera.getWorldDirection(dir);
+    mg.strokeStyle='#d13b3b'; mg.lineWidth=3; mg.beginPath(); mg.moveTo(x,z); mg.lineTo(x+dir.x*22, z+dir.z*22); mg.stroke();
+    mg.fillStyle='#d13b3b'; mg.beginPath(); mg.arc(x,z,6,0,Math.PI*2); mg.fill();
+  }
+}
+mini.addEventListener('click',e=>{
+  const b=mini.getBoundingClientRect();
+  const x=(e.clientX-b.left)/b.width*mini.width/MS, z=(e.clientY-b.top)/b.height*mini.height/MS;
+  goTo(x,z);
+});
+function roomAt(x,z){ for (const k in R){ const r=R[k]; if(x>=r.x[0]&&x<=r.x[1]&&z>=r.z[0]&&z<=r.z[1]) return (r.n||R.h5a.n); } return 'Buiten'; }
+
+/* ---------- FPS meter (ook zichtbaar in de bril) ---------- */
+const tFps=document.getElementById('tFps');
+const fpsCan=document.createElement('canvas'); fpsCan.width=256; fpsCan.height=96;
+const fpsTex=new THREE.CanvasTexture(fpsCan); fpsTex.colorSpace=THREE.SRGBColorSpace;
+const fpsSprite=new THREE.Sprite(new THREE.SpriteMaterial({map:fpsTex, depthTest:false, transparent:true}));
+fpsSprite.renderOrder=20; fpsSprite.scale.set(0.24,0.09,1); fpsSprite.position.set(0.18,-0.16,-0.6); fpsSprite.visible=false; camera.add(fpsSprite);
+let fpsFrames=0, fpsT=0, fpsVal=0;
+function drawFps(){
+  const g=fpsCan.getContext('2d'); g.clearRect(0,0,256,96);
+  g.fillStyle='rgba(29,34,40,0.85)'; g.beginPath(); g.roundRect(0,0,256,96,16); g.fill();
+  g.fillStyle = fpsVal>=68 ? '#5fd38a' : fpsVal>=50 ? '#f0c04a' : '#ff6b6b';
+  g.font='700 52px Saira, system-ui, sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(fpsVal+' FPS',128,50);
+  fpsTex.needsUpdate=true;
+}
+tFps.onchange=()=>{ fpsSprite.visible=tFps.checked; if(!tFps.checked) where.dataset.fps=''; };
+
+/* ---------- loop ---------- */
+const clock=new THREE.Clock(); let miniT=0;
+renderer.setAnimationLoop(()=>{
+  const dt=Math.min(clock.getDelta(),0.1);
+  fpsFrames++; fpsT+=dt;
+  if (fpsT>=0.5){ fpsVal=Math.round(fpsFrames/fpsT); fpsFrames=0; fpsT=0; if(tFps.checked){ drawFps(); where.dataset.fps=' · '+fpsVal+' FPS'; } }
+  if (renderer.xr.isPresenting){
+    xrSticks(dt);
+    let hit=null; for(const c of ctrls){ hit=castFrom(c)||hit; }
+    reticle.visible=!!hit; if(hit) reticle.position.set(hit.x,0.15,hit.z);
+  } else if (mode==='walk'){
+    const sp=(keys.ShiftLeft||keys.ShiftRight?20:6)*dt;
+    const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0);
+    const s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
+    if (f||s){ rig.position.x += (-Math.sin(yaw)*f + Math.cos(yaw)*s)*sp; rig.position.z += (-Math.cos(yaw)*f - Math.sin(yaw)*s)*sp; }
+  } else orbit.update();
+  if (!renderer.xr.isPresenting && (miniT+=dt)>0.15){ miniT=0; drawMini();
+    const base = mode==='walk' ? roomAt(rig.position.x,rig.position.z) : 'Overzicht';
+    where.textContent = base + (tFps.checked ? '  '+fpsVal+' FPS' : ''); }
+  renderer.render(scene,camera);
+});
+addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+window.__R=R; window.__goTo=goTo; window.__setMode=setMode; window.__tPlan=()=>{tPlan.checked=true;tPlan.onchange();};
+</script>
