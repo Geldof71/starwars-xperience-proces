@@ -291,7 +291,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       <h3>Voice over en icoon</h3>
       <p>De voice over is ingesproken door het team zelf, met eigen stem. De ronde iconen zijn stills van C-3PO en R2-D2, © Lucasfilm en Disney, alleen gebruikt in dit niet commerciële schoolproject. Het R2-D2 geluidje is door het team zelf aangeleverd en ook © Lucasfilm en Disney.</p>
       <h3>Foto’s van de RAI</h3>
-      <p>Hotlinks naar Wikimedia Commons. Overzicht voorgevel: A. J. van der Wal, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0. Hal in aanbouw: Joop van Bilsen, Anefo, Nationaal Archief, CC0. Booggewelf: Fernando Pereira, Anefo, Nationaal Archief, CC0. Complex: Rob Bogaerts, Anefo, Nationaal Archief, CC0. RAI 1974: J.M. Arsath Ro’is, Stadsarchief Amsterdam, CC0.</p>
+      <p>Foto’s van Wikimedia Commons, de voorgevel staat als kopie op deze site, de andere vier worden direct van Commons geladen. Overzicht voorgevel: A. J. van der Wal, Rijksdienst voor het Cultureel Erfgoed, CC BY-SA 4.0. Hal in aanbouw: Joop van Bilsen, Anefo, Nationaal Archief, CC0. Booggewelf: Fernando Pereira, Anefo, Nationaal Archief, CC0. Complex: Rob Bogaerts, Anefo, Nationaal Archief, CC0. RAI 1974: J.M. Arsath Ro’is, Stadsarchief Amsterdam, CC0.</p>
       <h3>Bronnen locatie onderzoek</h3>
       <p>RAI Amsterdam: rai.nl (plattegrond en vloerbelasting) en Wikipedia (totale oppervlakte, capaciteit, rijksmonument). Rotterdam Ahoy: ahoy.nl en locaties.nl. Brabanthallen: technische specificaties op locaties.nl. Expo Greater Amsterdam: factsheet van Libema. Jaarbeurs Utrecht: jaarbeurs.nl. MECC Maastricht: lijst van congrescentra op Wikipedia. Bereikbaarheid: AEO. Alle oppervlaktes zijn afgerond en door de locaties zelf opgegeven, dus indicatief.</p>
       <h3>3D modellen</h3>
@@ -336,13 +336,13 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 
   var MAIN='muziek/star_wars_main.mp3';
   var EPS=[
-   {id:1,title:'De missie: de RAI',sum:'Van concept naar concrete plek. Waarom de RAI, het model, Blender, de AI laag en de video.',status:'Eerste versie',thumb:'img/blender/SHOT_1.jpg',music:{id:'muziek/watto.mp3',start:21,vol:32},
+   {id:1,title:'MH1.3: De missie, de RAI',sum:'Van concept naar concrete plek. Waarom de RAI, het model, Blender, de AI laag en de video.',status:'Eerste versie',thumb:'img/blender/SHOT_1.jpg',music:{id:'muziek/watto.mp3',start:21,vol:32},
     slides:[
      V(txt('De missie','Van concept naar een echte plek.',6.6,'img/blender/SHOT_1.jpg'),['v1a']),
      V(W(txt('Onze gids','Een bezorgde droid vertelt het verhaal.',6.2,'img/blender/SHOT_2.jpg'),'cut'),['v1b']),
      V(W(txt('Blok 5 was klaar','De concepten waren gepitcht en goed ontvangen.',4.4,'img/blender/SHOT_5.jpg'),'h'),['v2a']),
      V(W(txt('Nu het moeilijke deel','Ze echt maken.',3,'img/blender/SHOT_6.jpg'),'cut'),['v2b']),
-     V(W(txt('Onze keuze: de RAI','Groot, bekend en goed bereikbaar.',5.1,CM+encodeURIComponent('Overzicht gedeelte voorgevel - Amsterdam - 20356997 - RCE.jpg')+'?width=1600'),'h'),['v2c']),
+     V(W(txt('Onze keuze: de RAI','Groot, bekend en goed bereikbaar.',5.1,'img/rai_voorgevel.jpg'),'h'),['v2c']),
      V(W(rimg('Bouw van de nieuwe RAI aan het Europaplein, de hal, Bestanddeelnr 911-6057.jpg','De hal in aanbouw','Foto: Joop van Bilsen / Anefo, Nationaal Archief, CC0',2.3),'v'),['v2d']),
      W(rimg('Interieur van deels gesloopte RAI, Bestanddeelnr 930-9961.jpg','Het booggewelf van binnen','Foto: Fernando Pereira / Anefo, Nationaal Archief, CC0',2.3),'cut'),
      V(W(rimg('Het nieuwe complex (3 hallen, 6 congreszalen), Bestanddeelnr 931-7995.jpg','Het complex aan het Europaplein','Foto: Rob Bogaerts / Anefo, Nationaal Archief, CC0',3.4),'cut'),['v2e']),
@@ -481,7 +481,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     if(!sfxd&&t>=c.sfx){sfxd=true;if(r2.hidden){r2.hidden=false}r2.classList.add('beep');try{sfxEl.currentTime=0;sfxEl.play()}catch(e){}sfxEl.onended=function(){r2.classList.remove('beep')}}};
   function level(){if(!voAn)return;voAn.getByteTimeDomainData(voBuf);var m=0;for(var i=0;i<voBuf.length;i++){var d=Math.abs(voBuf[i]-128);if(d>m)m=d}voAv.style.setProperty('--lvl',Math.min(1,m/55).toFixed(2));voRaf=requestAnimationFrame(level)}
   function setupAn(){if(voAn)return;try{if(!ac||ac.state!=='running')return;var src=ac.createMediaElementSource(voEl);voAn=ac.createAnalyser();voAn.fftSize=256;voBuf=new Uint8Array(voAn.fftSize);src.connect(voAn);voAn.connect(ac.destination)}catch(e){voAn=null}}
-  function duck(on){if(on===duckOn)return;duckOn=on;if(!musicOn)return;fade(on?Math.min(want.vol,.07):want.vol,null,on?.012:.006)}
+  function duck(on){duckOn=on;stepUp=.006;stepDn=.012}
   function hideSub(){r2hide();voBox.hidden=true;stage.classList.remove('talk');voAv.classList.remove('pulse');voAv.style.setProperty('--lvl',0);cancelAnimationFrame(voRaf)}
   function nextVo(){
     if(!voQ.length){hideSub();duck(false);return}
@@ -507,7 +507,22 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     d:['polygon(0 0,0 0,-30% 100%,0 100%)','polygon(0 0,130% 0,100% 100%,0 100%)'],
     iris:['circle(0% at 50% 50%)','circle(78% at 50% 50%)']};
   function go(i,w){var sl=EPS[cur.ep].slides[i];goto(i,w||(sl&&sl.w)||'h')}
+  var preC={},gTok=0;
+  function assets(s){var a=[];if(s.src)a.push(s.src);if(s.bg)a.push(s.bg);if(s.type==='cmp'){a.push('img/ai/SHOT_'+s.n+'.jpg','img/blender/SHOT_'+s.n+'.jpg')}return a}
+  function pre(u){if(preC[u])return preC[u];var im=new Image();im.src=u;preC[u]=im;return im}
+  function ready(s,fn){
+    var list=assets(s).map(pre),done=false,left=0;
+    function fin(){if(done)return;done=true;fn()}
+    list.forEach(function(im){if(!im.complete){left++;var f=function(){left--;if(left<=0)fin()};im.addEventListener('load',f,{once:true});im.addEventListener('error',f,{once:true})}});
+    if(left<=0)fin();else setTimeout(fin,3500);
+  }
   function goto(i,kind){
+    stopLoop();var e0=EPS[cur.ep];i=Math.max(0,Math.min(e0.slides.length-1,i));
+    var gt=++gTok;
+    for(var k=1;k<=3;k++){var nx=e0.slides[i+k];if(nx)assets(nx).forEach(pre)}
+    ready(e0.slides[i],function(){if(gt===gTok)goto2(i,kind)});
+  }
+  function goto2(i,kind){
     stopLoop();var e=EPS[cur.ep];i=Math.max(0,Math.min(e.slides.length-1,i));cur.i=i;
     var s=e.slides[i];slide=null;held=false;elapsed=0;last=0;pos=100;
     var olds=Array.prototype.slice.call(stage.children).filter(function(c){return !c.classList.contains('keep')});var el=buildSlide(s);stage.appendChild(el);
@@ -567,6 +582,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     segs.innerHTML='';
     e.slides.forEach(function(s,k){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ga naar onderdeel '+(k+1));b.innerHTML='<i></i>';b.onclick=function(){stopVo();go(k)};segs.appendChild(b)});
     $('b-play').textContent='Pauze';$('b-play').setAttribute('aria-pressed','false');
+    e.slides.forEach(function(sl){assets(sl).forEach(function(u){if(/^https?:/.test(u))pre(u)})});
     show('view-ep');go(0);
   }
   $('b-prev').onclick=function(){stopVo();prev()};
@@ -589,18 +605,15 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 
   /* muziek: eigen mp3, geen YouTube meer (geen reclames) */
   var au=new Audio('muziek/star_wars_main.mp3');au.loop=true;au.preload='auto';au.volume=0;
-  var fadeT=null,musicOn=false,menuTimer=null,want={vol:.4};
+  var musicOn=false,menuTimer=null,want={vol:.4},hold=false,pend=null,stepUp=.006,stepDn=.02,curSrc=MAIN,pendStart=0;
   function setBtn(){snd.textContent=musicOn?'Muziek uit':'Muziek aan';snd.setAttribute('aria-pressed',musicOn?'true':'false')}
-  function fade(to,done,step){step=step||.02;
-    clearInterval(fadeT);
-    fadeT=setInterval(function(){
-      var v=au.volume,n=v<to?Math.min(to,v+step):Math.max(to,v-step);
-      au.volume=Math.max(0,Math.min(1,n));
-      if(Math.abs(n-to)<.001){au.volume=Math.max(0,Math.min(1,to));clearInterval(fadeT);if(done)done()}
-    },80);
-  }
-  var curSrc=MAIN;
-  var pendStart=0;
+  function tgt(){return(!musicOn||hold)?0:(duckOn?Math.min(want.vol,.07):want.vol)}
+  setInterval(function(){
+    var to=tgt(),v=au.volume,n=v<to?Math.min(to,v+stepUp):Math.max(to,v-stepDn);
+    au.volume=Math.max(0,Math.min(1,n));
+    if(pend&&au.volume<=.001){var q=pend;pend=null;applySrc(q.id,q.start);if(musicOn){var pr=au.play();if(pr&&pr.catch)pr.catch(function(){})}hold=false;stepUp=.006}
+    if(!musicOn&&!pend&&au.volume<=.001&&!au.paused)au.pause();
+  },80);
   function applySrc(id,start){
     au.src=id;pendStart=start||0;
     var f=function(){try{au.currentTime=pendStart}catch(e){}au.removeEventListener('loadedmetadata',f)};
@@ -608,17 +621,16 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   }
   function setTrack(id,start,vol){
     want={vol:(vol||18)/100};
-    if(id===curSrc){if(musicOn)fade(want.vol,null,.01);return}
+    if(id===curSrc&&!pend){stepUp=.01;return}
     curSrc=id;
-    if(!musicOn){applySrc(id,start);return}
-    fade(0,function(){applySrc(id,start);var p=au.play();if(p&&p.catch)p.catch(function(){});fade(want.vol,null,.006)});
+    if(!musicOn){pend=null;hold=false;applySrc(id,start);return}
+    hold=true;stepDn=.03;pend={id:id,start:start};
   }
   function startMusic(){
-    musicOn=true;setBtn();
+    musicOn=true;setBtn();stepUp=.006;
     var p=au.play();if(p&&p.catch)p.catch(function(){});
-    fade(want.vol,null,.006);
   }
-  function stopMusic(){musicOn=false;setBtn();fade(0,function(){au.pause()})}
+  function stopMusic(){musicOn=false;setBtn();stepDn=.02}
   snd.addEventListener('click',function(){if(musicOn){stopMusic()}else{startMusic()}});
 
   /* intro */
@@ -634,7 +646,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 
   /* routering */
   function route(){
-    tok++;stopLoop();stopVo();clearTimeout(menuTimer);
+    tok++;gTok++;stopLoop();stopVo();clearTimeout(menuTimer);
     var h=location.hash.replace('#','')||'intro',m=/^aflevering-(\d+)$/.exec(h);
     if(m&&EPS[+m[1]-1]){
       var ep=EPS[+m[1]-1],mu=ep.music||{id:MAIN,start:0,vol:18};
