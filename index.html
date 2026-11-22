@@ -233,12 +233,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   <div class="cols">
     <div>
       <h3>Team</h3>
-      <p>Stan Geldof, Elvin Spooren en Coen Geldof. Hogeschool van Amsterdam, SMP, blok 6 Generative Video.</p>
+      <p>Stan Geldof (Scrum Master en 3D Model Artist), Coen Geldof (Virtual Experience Master) en Elvin Spooren (Star Wars Lore Master). Hogeschool van Amsterdam, SMP, blok 6 Generative Video.</p>
       <h3>Gereedschap</h3>
       <p>Blender voor de 3D scène en renders. Higgsfield met GPT Image 2.6 en Nano Banana 2.1 voor de AI laag. three.js voor het interactieve grijze model.</p>
       <p>Code van het grijze RAI model: <a href="https://github.com/Geldof71/STARWARS_XPERIENCE" rel="noopener">github.com/Geldof71/STARWARS_XPERIENCE</a></p>
       <h3>Muziek</h3>
-      <p>Star Wars Episode I Soundtrack, Star Wars Main Title and The Arrival at Naboo. De muziek is van John Williams, uitgegeven door Sony Classical. Alleen gebruikt in dit niet commerciële schoolproject.</p>
+      <p>Star Wars Episode I Soundtrack: Main Title and The Arrival at Naboo, en Watto\u2019s Deal and Kids at Play. De muziek is van John Williams, uitgegeven door Sony Classical. Alleen gebruikt in dit niet commerciële schoolproject.</p>
     </div>
     <div>
       <h3>3D modellen</h3>
@@ -275,16 +275,17 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   function img(n,d){return {type:'img',src:'img/blender/SHOT_'+n+'.jpg',cap:SHOT[n][0],sub:SHOT[n][1],dur:d||5.5}}
   function cmp(n,alt){return {type:'cmp',n:n,cap:SHOT[n][0],alt:alt,dur:10}}
 
-  var MAIN='_D0ZQPqeJkk';
+  var MAIN='muziek/star_wars_main.mp3';
   var EPS=[
-   {id:1,title:'De opdracht en het onderzoek',sum:'Waarom de RAI? Het onderzoek, de feedback en de keuze voor een echte locatie.',status:'Eerste versie',thumb:null,music:{id:'gXnY_tVKI1o',start:0,vol:18},
+   {id:1,title:'De opdracht en het onderzoek',sum:'Waarom de RAI? Het onderzoek, de feedback en de keuze voor een echte locatie.',status:'Eerste versie',thumb:null,music:{id:'muziek/watto.mp3',start:0,vol:18},
     slides:[
      txt('Eerst een vraag','Waar zet je een Star Wars Xperience neer? Aan het begin van de opdracht wisten we dat nog niet.',7),
-     txt('Het onderzoek','We deden onderzoek naar de plek voor de xperience.',7),
-     txt('De uitkomst','De RAI bleek de meest logische plek om dit te bouwen.',7),
-     txt('De feedback','Aan het eind van blok 5 kregen we feedback: werk concreet uit HOE de xperience wordt neergezet.',9),
-     txt('Daarom een echte locatie','Een echte hal met een echte plattegrond maakt het concreet. Zo zie je wat het wordt.',9),
-     txt('Wat we willen doen','Een Tatooine stad in Hal 1 van de RAI, eerst als model, daarna als render en straks als film.',8)
+     txt('Wij denken groot','Een grote xperience heeft een grote hal nodig.',6),
+     txt('Waarom de RAI','De RAI is enorm, ligt in Amsterdam, is bekend bij toeristen en goed bereikbaar met het OV.',9),
+     txt('De feedback','De opdrachtgevers vonden het een heel vet concept. Maar ze wilden vooral zien hoe het echt werkt, met een echte locatie en een echte manier van bouwen.',11),
+     txt('Daarom een echte locatie','Dus bouwen we het op de plek zelf: Hal 1 van de RAI, eerst als model van de echte ruimte.',8),
+     txt('Drie Jedi\u2019s, drie rollen','Stan Geldof is Scrum Master en 3D Model Artist. Coen Geldof is Virtual Experience Master. Elvin Spooren is Star Wars Lore Master.',11),
+     txt('Wat we willen doen','Een Tatooine stad in Hal 1, eerst als model, daarna als render en straks als film.',8)
     ]},
    {id:2,title:'Het grijze model',sum:'De RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
     slides:[
@@ -478,7 +479,14 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       if(Math.abs(n-to)<.001){au.volume=Math.max(0,Math.min(1,to));clearInterval(fadeT);if(done)done()}
     },80);
   }
-  function setTrack(id,start,vol){want={vol:(vol||18)/100};if(musicOn)fade(want.vol)}
+  var curSrc=MAIN;
+  function setTrack(id,start,vol){
+    want={vol:(vol||18)/100};
+    if(id===curSrc){if(musicOn)fade(want.vol);return}
+    curSrc=id;
+    if(!musicOn){au.src=id;return}
+    fade(0,function(){au.src=id;var p=au.play();if(p&&p.catch)p.catch(function(){});fade(want.vol)});
+  }
   function startMusic(){
     musicOn=true;setBtn();
     var p=au.play();if(p&&p.catch)p.catch(function(){});
