@@ -363,7 +363,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
      W(txt('De AI laag','Daaroverheen komt een AI laag. Links Blender, rechts AI. Schuif zelf mee.',4.5),'d'),
      W(cmp(1,null,5),'v'),W(cmp(2,null,5),'cut'),W(cmp(5,'img/ai_nano/SHOT_5.jpg',5),'cut'),W(cmp(6,null,5),'cut'),W(cmp(7,null,5),'cut'),W(cmp(8,'img/ai_nano/SHOT_8.jpg',5),'cut'),W(cmp(10,null,5),'cut'),
      W(txt('En dan de video','Zo kan Tatooine er in de Europahal uitzien, in beweging. Dit is onze mini pilot.',5,'img/ai/SHOT_8.jpg'),'iris'),
-     W({type:'video',src:'tatooine_film.mp4',poster:'tatooine_poster.jpg',manual:true},'iris')
+     W({type:'video',yt:'0MiF0E72Lds',src:'tatooine_film.mp4',poster:'tatooine_poster.jpg',manual:true},'iris')
     ]},
    {id:2,title:'Het grijze model',sum:'De RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
     slides:[
@@ -424,6 +424,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   }
 
   /* speler */
+  window.addEventListener('message',function(ev){if(!/youtube/.test(ev.origin))return;try{var m=typeof ev.data==='string'?JSON.parse(ev.data):ev.data;if(m&&m.event==='onStateChange'&&m.info===0&&auto)next();else if(m&&m.event==='infoDelivery'&&m.info&&m.info.playerState===0&&auto)next()}catch(e){}});
   var vidHold=false,cur={ep:null,i:0},paused=false,auto=true,held=false,elapsed=0,last=0,raf=0,cd=null,slide=null,pos=100;
   var stage=$('stage'),segs=$('segs');
   var tok=0,ac=null,fx=true,noiseBuf=null;
@@ -480,6 +481,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       }
       slide={s:s,el:d,range:r};
     }
+    else if(s.type==='video'&&s.yt){
+      d.innerHTML='<iframe title="Tatooine in de Europahal, korte film" src="https://www.youtube-nocookie.com/embed/'+s.yt+'?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin='+encodeURIComponent(location.origin)+'" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#000"></iframe>';
+      var yf=d.firstChild;yf.addEventListener('load',function(){try{yf.contentWindow.postMessage(JSON.stringify({event:'listening',id:1}),'*');yf.contentWindow.postMessage(JSON.stringify({event:'command',func:'addEventListener',args:['onStateChange']}),'*')}catch(e){}});
+    }
     else if(s.type==='video'){
       d.innerHTML='<video playsinline preload="auto" controls controlsList="nodownload" aria-label="Tatooine in de Europahal, korte film"></video>';
       var vd=d.firstChild;vd.poster=s.poster||'';vd.src=s.src;
@@ -533,7 +538,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     iris:['circle(0% at 50% 50%)','circle(78% at 50% 50%)']};
   function go(i,w){var sl=EPS[cur.ep].slides[i];goto(i,w||(sl&&sl.w)||'h')}
   var preC={},gTok=0;
-  function assets(s){var a=[];if(s.type==='video')return s.poster?[s.poster]:[];if(s.src)a.push(s.src);if(s.bg)a.push(s.bg);if(s.type==='cmp'){a.push('img/ai/SHOT_'+s.n+'.jpg','img/blender/SHOT_'+s.n+'.jpg')}return a}
+  function assets(s){var a=[];if(s.type==='video')return s.yt?[]:(s.poster?[s.poster]:[]);if(s.src)a.push(s.src);if(s.bg)a.push(s.bg);if(s.type==='cmp'){a.push('img/ai/SHOT_'+s.n+'.jpg','img/blender/SHOT_'+s.n+'.jpg')}return a}
   function pre(u){if(preC[u])return preC[u];var im=new Image();im.src=u;preC[u]=im;return im}
   function ready(s,fn){
     var list=assets(s).map(pre),done=false,left=0;
@@ -568,7 +573,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       an.onfinish=fin;an.oncancel=fin;
     }else{olds.forEach(function(c){if(c.parentNode)c.remove()})}
     stage.classList.remove('cine');
-    if(s.type==='video'){stopVo();vidHold=true;var vv=el.querySelector('video');var pr0=vv.play();if(pr0&&pr0.catch)pr0.catch(function(){})}
+    if(s.type==='video'){stopVo();vidHold=true;var vv=el.querySelector('video');if(vv){var pr0=vv.play();if(pr0&&pr0.catch)pr0.catch(function(){})}}
     if(s.vo)say(s.vo);
     if(s.type==='cmp'){slide=slide||{};slide.s=s;slide.el=el;slide.range=el.querySelector('input');el.style.setProperty('--pos','100%')}
     setSeg();
@@ -623,7 +628,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   $('b-prev').onclick=function(){stopVo();prev()};
   $('b-next').onclick=function(){stopVo();next()};
   $('b-vo').onclick=function(){voOn=!voOn;if(!voOn)stopVo();this.textContent='Voice over: '+(voOn?'aan':'uit');this.setAttribute('aria-pressed',voOn?'true':'false')};
-  $('b-play').onclick=function(){paused=!paused;var pv=stage.querySelector('video');if(pv){try{if(paused)pv.pause();else pv.play()}catch(e){}}try{if(paused){voEl.pause()}else if(voEl.src&&!voEl.ended&&voEl.currentTime>0&&voQ!==null&&!voBox.hidden){voEl.play()}}catch(e){}this.textContent=paused?'Verder afspelen':'Pauze';this.setAttribute('aria-pressed',paused?'true':'false')};
+  $('b-play').onclick=function(){paused=!paused;var yfr=stage.querySelector('iframe');if(yfr){try{yfr.contentWindow.postMessage(JSON.stringify({event:'command',func:paused?'pauseVideo':'playVideo',args:[]}),'*')}catch(e){}}var pv=stage.querySelector('video');if(pv){try{if(paused)pv.pause();else pv.play()}catch(e){}}try{if(paused){voEl.pause()}else if(voEl.src&&!voEl.ended&&voEl.currentTime>0&&voQ!==null&&!voBox.hidden){voEl.play()}}catch(e){}this.textContent=paused?'Verder afspelen':'Pauze';this.setAttribute('aria-pressed',paused?'true':'false')};
   $('b-auto').onclick=function(){auto=!auto;this.textContent='Automatisch door: '+(auto?'aan':'uit');this.setAttribute('aria-pressed',auto?'true':'false')};
   $('b-fx').onclick=function(){fx=!fx;this.textContent='Effecten: '+(fx?'aan':'uit');this.setAttribute('aria-pressed',fx?'true':'false')};
   $('b-menu').onclick=function(){location.hash='menu'};
