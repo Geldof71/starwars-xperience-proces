@@ -405,11 +405,11 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 
   EPS.forEach(function(e){if(e.id===9){e.title='LV1.3: POP';e.sum='Mijn persoonlijk ontwikkelplan op één A4: hardskill per week en logboek.';e.slides=[
    T('LV1.3 POP','Beroepsrol: mediamaker van de toekomst. Mijn persoonlijk ontwikkelplan voor blok 6 op één A4: doelen, acties, benodigdheden, planning en logboek per week. Print of sla het op als PDF.'),
-   {type:'embed',src:'pop.html',cap:'POP Hardskill op één A4. Scroll voor het hele overzicht.',manual:true}
+   {type:'embed',src:'pop.html',cap:'',nocap:true,manual:true}
   ]}});
   EPS.push({id:11,title:'Feedback',sum:'Tien feedbackpunten van docenten op één overzicht: de vraag, wat we hoorden en wat we ermee deden.',status:'In opbouw',thumb:null,slides:[
    T('Feedback','Tien feedbackpunten op één A4 overzicht: de vraag die we stelden, wat we hoorden en wat we ermee doen. Print of sla het op als PDF.'),
-   {type:'embed',src:'feedback.html',cap:'Alle feedbackpunten op één A4. Scroll voor het hele overzicht.',manual:true}
+   {type:'embed',src:'feedback.html',cap:'',nocap:true,manual:true}
   ]});
 
   var $=function(id){return document.getElementById(id)};
@@ -503,6 +503,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     else if(s.type==='embed'){
       d.innerHTML='<iframe title="Interactief grijs model van de RAI" loading="lazy"></iframe><a class="embed-link" target="_blank" rel="noopener">Open op volledig scherm</a><div class="cap"></div>';
       d.querySelector('iframe').src=s.src;d.querySelector('a').href=s.src;d.querySelector('.cap').textContent=s.cap;d.querySelector('.cap').style.bottom='auto';d.querySelector('.cap').style.top='14px';
+      if(s.nocap){var cp=d.querySelector('.cap');cp.parentNode.removeChild(cp)}
     }
     return d;
   }
