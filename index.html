@@ -106,6 +106,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .ph h2{font-size:clamp(26px,4vw,40px);color:var(--gold)}
 .stage{position:relative;aspect-ratio:2000/1130;background:#000;border:1px solid var(--line);overflow:hidden}
 .sl{position:absolute;inset:0;background:#000}
+.sl video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
 .stage:before,.stage:after{content:"";position:absolute;left:0;right:0;height:0;background:#000;z-index:8;pointer-events:none;transition:height .6s ease}
 .stage:before{top:0}.stage:after{bottom:0}
 .stage.cine:before,.stage.cine:after{height:6.5%}
@@ -361,7 +362,8 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
      W(img(1,3.2),'v'),W(img(2,3.2),'cut'),W(img(5,3.2),'cut'),W(img(6,3.2),'cut'),W(img(7,3.2),'cut'),
      W(txt('De AI laag','Daaroverheen komt een AI laag. Links Blender, rechts AI. Schuif zelf mee.',4.5),'d'),
      W(cmp(1,null,5),'v'),W(cmp(2,null,5),'cut'),W(cmp(5,'img/ai_nano/SHOT_5.jpg',5),'cut'),W(cmp(6,null,5),'cut'),W(cmp(7,null,5),'cut'),W(cmp(8,'img/ai_nano/SHOT_8.jpg',5),'cut'),W(cmp(10,null,5),'cut'),
-     W(txt('En dan de video','Hoe Tatooine er uit kan zien, in beweging. Die maken we nog af. Daarna volgen de andere delen van de xperience.',7.5,'img/ai/SHOT_8.jpg'),'iris')
+     W(txt('En dan de video','Zo kan Tatooine er in de Europahal uitzien, in beweging. Dit is onze mini pilot.',5,'img/ai/SHOT_8.jpg'),'iris'),
+     W({type:'video',src:'tatooine_film.mp4',poster:'tatooine_poster.jpg',manual:true},'iris')
     ]},
    {id:2,title:'Het grijze model',sum:'De RAI als blokkenmodel. Loop er zelf doorheen.',status:'Klaar',thumb:null,
     slides:[
@@ -415,13 +417,14 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 
   /* weergave wisselen */
   function show(v){
+    document.querySelectorAll('video').forEach(function(x){try{x.pause()}catch(e){}});vidHold=false;
     views.forEach(function(id){$(id).hidden=(id!==v)});curView=v;
     $('bar').hidden=(v==='view-intro');
     window.scrollTo(0,0);
   }
 
   /* speler */
-  var cur={ep:null,i:0},paused=false,auto=true,held=false,elapsed=0,last=0,raf=0,cd=null,slide=null,pos=100;
+  var vidHold=false,cur={ep:null,i:0},paused=false,auto=true,held=false,elapsed=0,last=0,raf=0,cd=null,slide=null,pos=100;
   var stage=$('stage'),segs=$('segs');
   var tok=0,ac=null,fx=true,noiseBuf=null;
   function stopLoop(){cancelAnimationFrame(raf);raf=0;clearInterval(cd);cd=null}
@@ -477,6 +480,11 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       }
       slide={s:s,el:d,range:r};
     }
+    else if(s.type==='video'){
+      d.innerHTML='<video playsinline preload="auto" controls controlsList="nodownload" aria-label="Tatooine in de Europahal, korte film"></video>';
+      var vd=d.firstChild;vd.poster=s.poster||'';vd.src=s.src;
+      vd.addEventListener('ended',function(){if(auto)next()});
+    }
     else if(s.type==='embed'){
       d.innerHTML='<iframe title="Interactief grijs model van de RAI" loading="lazy"></iframe><a class="embed-link" target="_blank" rel="noopener">Open op volledig scherm</a><div class="cap"></div>';
       d.querySelector('iframe').src=s.src;d.querySelector('a').href=s.src;d.querySelector('.cap').textContent=s.cap;d.querySelector('.cap').style.bottom='auto';d.querySelector('.cap').style.top='14px';
@@ -525,7 +533,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     iris:['circle(0% at 50% 50%)','circle(78% at 50% 50%)']};
   function go(i,w){var sl=EPS[cur.ep].slides[i];goto(i,w||(sl&&sl.w)||'h')}
   var preC={},gTok=0;
-  function assets(s){var a=[];if(s.src)a.push(s.src);if(s.bg)a.push(s.bg);if(s.type==='cmp'){a.push('img/ai/SHOT_'+s.n+'.jpg','img/blender/SHOT_'+s.n+'.jpg')}return a}
+  function assets(s){var a=[];if(s.type==='video')return s.poster?[s.poster]:[];if(s.src)a.push(s.src);if(s.bg)a.push(s.bg);if(s.type==='cmp'){a.push('img/ai/SHOT_'+s.n+'.jpg','img/blender/SHOT_'+s.n+'.jpg')}return a}
   function pre(u){if(preC[u])return preC[u];var im=new Image();im.src=u;preC[u]=im;return im}
   function ready(s,fn){
     var list=assets(s).map(pre),done=false,left=0;
@@ -548,6 +556,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   }
   function goto2(i,kind){
     stopLoop();var e=EPS[cur.ep];i=Math.max(0,Math.min(e.slides.length-1,i));cur.i=i;
+    stage.querySelectorAll('video').forEach(function(v){try{v.pause()}catch(x){}});vidHold=false;
     var s=e.slides[i];slide=null;held=false;elapsed=0;last=0;pos=100;
     var olds=Array.prototype.slice.call(stage.children).filter(function(c){return !c.classList.contains('keep')});var el=buildSlide(s);stage.appendChild(el);
     if(s.type==='facts')fitFacts(el);
@@ -559,6 +568,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       an.onfinish=fin;an.oncancel=fin;
     }else{olds.forEach(function(c){if(c.parentNode)c.remove()})}
     stage.classList.remove('cine');
+    if(s.type==='video'){stopVo();vidHold=true;var vv=el.querySelector('video');var pr0=vv.play();if(pr0&&pr0.catch)pr0.catch(function(){})}
     if(s.vo)say(s.vo);
     if(s.type==='cmp'){slide=slide||{};slide.s=s;slide.el=el;slide.range=el.querySelector('input');el.style.setProperty('--pos','100%')}
     setSeg();
@@ -613,7 +623,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   $('b-prev').onclick=function(){stopVo();prev()};
   $('b-next').onclick=function(){stopVo();next()};
   $('b-vo').onclick=function(){voOn=!voOn;if(!voOn)stopVo();this.textContent='Voice over: '+(voOn?'aan':'uit');this.setAttribute('aria-pressed',voOn?'true':'false')};
-  $('b-play').onclick=function(){paused=!paused;try{if(paused){voEl.pause()}else if(voEl.src&&!voEl.ended&&voEl.currentTime>0&&voQ!==null&&!voBox.hidden){voEl.play()}}catch(e){}this.textContent=paused?'Verder afspelen':'Pauze';this.setAttribute('aria-pressed',paused?'true':'false')};
+  $('b-play').onclick=function(){paused=!paused;var pv=stage.querySelector('video');if(pv){try{if(paused)pv.pause();else pv.play()}catch(e){}}try{if(paused){voEl.pause()}else if(voEl.src&&!voEl.ended&&voEl.currentTime>0&&voQ!==null&&!voBox.hidden){voEl.play()}}catch(e){}this.textContent=paused?'Verder afspelen':'Pauze';this.setAttribute('aria-pressed',paused?'true':'false')};
   $('b-auto').onclick=function(){auto=!auto;this.textContent='Automatisch door: '+(auto?'aan':'uit');this.setAttribute('aria-pressed',auto?'true':'false')};
   $('b-fx').onclick=function(){fx=!fx;this.textContent='Effecten: '+(fx?'aan':'uit');this.setAttribute('aria-pressed',fx?'true':'false')};
   $('b-menu').onclick=function(){location.hash='menu'};
@@ -632,7 +642,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   var au=new Audio('muziek/star_wars_main.mp3');au.loop=true;au.preload='auto';au.volume=0;
   var musicOn=false,menuTimer=null,want={vol:.4},hold=false,pend=null,stepUp=.006,stepDn=.02,curSrc=MAIN,pendStart=0;
   function setBtn(){snd.textContent=musicOn?'Muziek uit':'Muziek aan';snd.setAttribute('aria-pressed',musicOn?'true':'false')}
-  function tgt(){return(!musicOn||hold)?0:(duckOn?Math.min(want.vol,.07):want.vol)}
+  function tgt(){return(!musicOn||hold||vidHold)?0:(duckOn?Math.min(want.vol,.07):want.vol)}
   setInterval(function(){
     var to=tgt(),v=au.volume,n=v<to?Math.min(to,v+stepUp):Math.max(to,v-stepDn);
     au.volume=Math.max(0,Math.min(1,n));
