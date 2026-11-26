@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S3.3 CREATIVE PIVOT 1 PODWARS</title><style>
+@page{size:A4;margin:0}
+*{box-sizing:border-box}
+body{margin:0;background:#15151c;font-family:Muli,Mulish,"Helvetica Neue",Arial,sans-serif;color:#222}
+.sheet{width:min(100%,210mm);margin:0 auto 6mm;background:#fff;min-height:297mm;padding-bottom:10mm}
+.hd{background:#cf5282;color:#fff;padding:9mm 10mm;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hd h1{margin:0;font-size:6mm;letter-spacing:.02em;line-height:1.25}
+.hd b{font-size:4.4mm;white-space:nowrap}
+.in{padding:6mm 10mm 0}
+.in p{margin:0 0 3mm;font-size:3.6mm;line-height:1.45;color:#333}
+.pr{display:block;margin:0 auto 4mm;padding:2.2mm 5mm;background:#cf5282;color:#fff;border:0;border-radius:2mm;font:inherit;font-size:3.2mm;cursor:pointer}
+.ph{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:2mm 0 4mm}
+.ph figure{margin:0}.ph img{width:100%;display:block;border:1px solid #ddd}
+.ph figcaption{font-size:2.8mm;color:#555;margin-top:1mm;line-height:1.3}
+.b{border-top:1px solid #e3d3da;padding:3mm 0 1mm;break-inside:avoid}
+.b h2{margin:0 0 1.5mm;font-size:4.2mm;color:#222}
+.b h2 i{font-style:normal;font-size:2.8mm;font-weight:600;color:#cf5282;background:#f3e2ea;padding:.6mm 2mm;border-radius:2mm;margin-left:2mm;vertical-align:middle}
+.b p{margin:0 0 1mm;font-size:3.3mm;line-height:1.4;color:#444}
+.b p b{color:#111}
+.k{background:#fbf3f6;border-left:1mm solid #cf5282;padding:1.6mm 2.4mm;margin:1.6mm 0 1mm;color:#222}
+.k b{color:#cf5282}
+@media(max-width:560px){.ph{grid-template-columns:1fr}.hd h1{font-size:4.6mm}}
+@media print{body{background:#fff}.sheet{width:210mm;min-height:0;margin:0;padding-bottom:0}.pr{display:none}}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:3mm 5mm}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2.4mm}
+.g3 div{background:#fbf3f6;border-left:1mm solid #cf5282;padding:1.6mm 2.4mm}
+.g3 div p{font-size:3mm;margin:0}
+.g3 b.t{display:block;font-size:3mm;color:#cf5282;margin-bottom:.6mm}
+.b p{font-size:3.1mm}
+.src{font-size:2.6mm;color:#777;margin:2mm 0 0}
+@media(max-width:560px){.g2,.g3{grid-template-columns:1fr}}
+
+.pl{background:#fbf3f6;border-left:1mm solid #cf5282;padding:3mm 4mm;margin:3mm 0}
+.pl b{display:block;margin-bottom:1.5mm;font-size:3.6mm}
+.pl audio{width:100%}
+.pl .tabs{display:flex;gap:2mm;margin:2mm 0 0;flex-wrap:wrap}
+.pl .tabs button{font:inherit;font-size:3mm;border:1px solid #cf5282;background:#fff;color:#cf5282;border-radius:2mm;padding:1mm 3mm;cursor:pointer}
+.pl .tabs button.on{background:#cf5282;color:#fff}
+.q{font-size:3.1mm;color:#777;margin:0 0 1mm!important}
+.a{font-size:3.5mm!important;color:#222!important}
+</style></head><body>
+<div class="sheet"><div class="hd"><h1>CREATIVE PIVOT 1<br>PODWARS</h1><b>S 3.3 · BLOK 6</b></div>
+<div class="in">
+<p>Onze eerste Creative Pivot is een podcast van ongeveer 24 minuten. We hebben hem zelf opgenomen. De opdracht sloot weer niet aan op Star Wars, dus hebben we hem aangepast: in plaats van een losse opdracht is het een overzicht van waar we nu staan in het project en een terugblik op het vorige project.</p>
+<div class="pl"><b>Luister: Podwars</b>
+<audio id="au" controls preload="none"></audio>
+<div class="tabs" id="tb"></div></div>
+<div class="b"><h2>Resultaat<i>PIVOT 1</i></h2><p>Een podcast van 24 minuten over waar de Star Wars Xperience nu staat en wat we van het vorige project meenemen. Je kan hem hierboven in drie delen beluisteren, hij speelt vanzelf door.</p></div>
+<div class="b"><h2>Samenwerking</h2><p>We hebben de podcast samen als projectgroep opgenomen. We hebben de opdracht aangepast zodat hij bij het project past.</p></div>
+<div class="b"><h2>Mijn bijdrage</h2><p>Nog in te vullen.</p></div>
+</div></div>
+<script>
+var P=['podwars_0.mp3','podwars_1.mp3','podwars_2.mp3'],au=document.getElementById('au'),tb=document.getElementById('tb'),cur=0;
+function go(i,pl){cur=i;au.src=P[i];[].forEach.call(tb.children,function(b,j){b.className=j===i?'on':''});if(pl){var r=au.play();if(r&&r.catch)r.catch(function(){})}}
+P.forEach(function(_,i){var b=document.createElement('button');b.textContent='Deel '+(i+1);b.onclick=function(){go(i,true)};tb.appendChild(b)});
+au.addEventListener('ended',function(){if(cur<P.length-1)go(cur+1,true)});go(0,false);
+</script></body></html>
